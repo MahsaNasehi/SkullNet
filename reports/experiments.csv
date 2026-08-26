@@ -1,0 +1,1 @@
+experiment_id,timestamp,architecture,pretrained,weight_origin,external_resource_approval_reference,annotation_version,input_mode,image_size,fold,window_level,window_width,augmentation_config,mAP50,mAP50_95,detection_precision,detection_recall,study_AUROC,study_PR_AUC,sensitivity_0_5,specificity_0_5,Brier,isolated_fracture_QWK,average_inference_time,peak_VRAM,notes

@@ -1,0 +1,12 @@
+# IAAA contest dataset (large and potentially restricted)
+/iaaa-contest-bct/Data/training/
+/iaaa-contest-bct/Data/annotations/
+/iaaa-contest-bct/Data/training_df.pkl
+
+# Keep only the documentation placeholder for corrected annotations.
+/iaaa-contest-bct/Data/annotations_corrected/*
+!/iaaa-contest-bct/Data/annotations_corrected/README.md
+
+# Locally rendered YOLO dataset variants, if output_root is changed from /dev/shm.
+/fracture_dataset*/
+/outputs/fracture_dataset*/

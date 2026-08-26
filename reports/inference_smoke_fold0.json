@@ -1,0 +1,24 @@
+{
+  "model_load_seconds": 0.9708146989978559,
+  "peak_vram_bytes": 321174016,
+  "studies": [
+    {
+      "study_dir": "iaaa-contest-bct/Data/training/2265",
+      "fracture_prob": 0.1744384765625,
+      "dicom_loading": 0.21744818699880852,
+      "preprocessing_and_detector": 2.496345306000876,
+      "aggregation": 0.0001777420002326835,
+      "calibration": 6.8920016929041594e-06,
+      "total": 2.71397812700161
+    },
+    {
+      "study_dir": "iaaa-contest-bct/Data/training/1734",
+      "fracture_prob": 0.1229248046875,
+      "dicom_loading": 0.15315580899914494,
+      "preprocessing_and_detector": 0.13267877800171846,
+      "aggregation": 0.00013301599756232463,
+      "calibration": 5.788999260403216e-06,
+      "total": 0.2859733919976861
+    }
+  ]
+}

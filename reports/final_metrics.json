@@ -1,0 +1,4 @@
+{
+  "status": "pending_training_and_acceptance",
+  "reason": "Dataset audit completed, but the available Python 3.12 environment lacks pydicom/codecs, PyTorch, Ultralytics, scikit-learn, and trained local artifacts."
+}
