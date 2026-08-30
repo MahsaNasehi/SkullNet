@@ -31,10 +31,20 @@ Training has been verified with Python 3.10.12 and the following versions:
 | PyYAML | `6.0.3` |
 | pytest | `8.4.2` |
 
-Activate the existing CUDA-enabled environment. Do not replace its accepted PyTorch/CUDA installation:
+### Create the environment on a new CUDA server
+
+The following creates the known-good environment from scratch. The NVIDIA driver may be newer than CUDA 12.1; it only needs to support the CUDA 12.1 runtime bundled with PyTorch. Do not install the system CUDA toolkit merely for this project.
 
 ```bash
+conda create -n maskfo python=3.10.12 pip -y
 conda activate maskfo
+
+python -m pip install --upgrade pip setuptools wheel
+
+# Install the CUDA-enabled PyTorch wheels first. Do not replace this with a CPU wheel.
+python -m pip install \
+  torch==2.1.2+cu121 torchvision==0.16.2+cu121 \
+  --index-url https://download.pytorch.org/whl/cu121
 
 python -m pip install \
   numpy==1.26.4 pandas==2.2.3 pydicom==3.0.1 \
@@ -44,20 +54,30 @@ python -m pip install \
   PyYAML==6.0.3 pytest==8.4.2
 ```
 
+After cloning or copying the repository, install only the local package metadata; `--no-deps` prevents pip from replacing the pinned CUDA stack:
+
+```bash
+cd /absolute/path/to/fracture
+python -m pip install --no-deps -e .
+```
+
 Install `tmux` once at the operating-system level:
 
 ```bash
 sudo apt-get install -y tmux
 ```
 
-Verify the environment from the repository root:
+Verify the driver, CUDA-enabled wheel, package imports, and tests from the repository root:
 
 ```bash
-cd "/home/mahsa-nasehi/Desktop/New Folder/fracture"
+cd /absolute/path/to/fracture
+nvidia-smi
+python -c "import torch; print('CUDA available:', torch.cuda.is_available()); print('GPU:', torch.cuda.get_device_name(0)); print('Torch CUDA:', torch.version.cuda)"
 PYTHONPATH=src python -m fracture.utils.check_environment
-python -c "import torch; print(torch.cuda.is_available()); print(torch.cuda.get_device_name(0)); print(torch.version.cuda)"
 PYTHONPATH=src python -m pytest -q
 ```
+
+Expected PyTorch output includes `CUDA available: True` and `Torch CUDA: 12.1`. The driver-reported CUDA version in `nvidia-smi` can be newer; that is normal.
 
 ## Dataset preparation
 
@@ -70,38 +90,236 @@ PYTHONPATH=src python -m fracture.data.prepare_yolo --config configs/fracture.ya
 
 Dataset versions are immutable: generation fails if a version directory already exists. Establish `splits/folds.json` before OOF-assisted review. Only OOF disagreements may enter the review queue, and reviewer decisions must be recorded in `reports/reannotation_log.csv`; model output never changes labels automatically.
 
-## Fold-0 training in `tmux`
+## Second-server handoff: controlled COCO-pretrained Fold 0
 
-The current run is resumed from `outputs/fold_0/detector/weights/last.pt` inside a detached session named `fracture`. This is the exact launch command:
+Do not start folds 1–4 yet. The first experiment is a controlled Fold-0 comparison in which only initialization changes. Both arms use the same frozen split, 2.5D images, P2–P5 head, 768-pixel resolution, sampling, losses, optimizer, seed, augmentations, max study aggregation, and no calibration.
 
-```bash
-tmux new-session -d -s fracture \
-  -c "/home/mahsa-nasehi/Desktop/New Folder/fracture" \
-  "exec env YOLO_CONFIG_DIR=/tmp/ultralytics-maskfo PYTHONPATH=src \
-  /home/mahsa-nasehi/miniconda3/envs/maskfo/bin/python \
-  -m fracture.training.train_detector \
-  --config configs/fracture.yaml \
-  --fold 0 \
-  --dataset-yaml /dev/shm/iaaa_fracture/fracture_dataset_v0_original/fold_0.yaml \
-  --resume-from outputs/fold_0/detector/weights/last.pt \
-  --run-name detector"
+### 1. Copy the required private/local data
+
+Git does not contain the contest dataset. Copy the following to the same relative locations on the new server:
+
+```text
+iaaa-contest-bct/Data/training/
+iaaa-contest-bct/Data/annotations/
+iaaa-contest-bct/Data/training_df.pkl
 ```
 
-Attach to the running session:
+For the final A/B evaluation, also copy the historical V2 baseline checkpoint and its training history:
+
+```text
+outputs/fold_0/v1_25d_p2/weights/best.pt
+outputs/fold_0/v1_25d_p2/results.csv
+```
+
+The historical V0 checkpoint is needed only to reproduce/audit the local-transfer initialization arm:
+
+```text
+outputs/fold_0/detector/weights/best.pt
+```
+
+Check the paths from the repository root:
 
 ```bash
+cd /absolute/path/to/fracture
+test -d iaaa-contest-bct/Data/training
+test -d iaaa-contest-bct/Data/annotations
+test -f iaaa-contest-bct/Data/training_df.pkl
+test -f splits/folds.json
+df -h /dev/shm
+```
+
+The rendered dataset needs approximately 1 GB in `/dev/shm`; leave additional space for cache files.
+
+### 2. Cache and verify official YOLO11s weights once
+
+This is the only step that requires internet access. It downloads the official Ultralytics `yolo11s.pt` into the ignored development cache and writes SHA-256 provenance metadata.
+
+```bash
+cd /absolute/path/to/fracture
+conda activate maskfo
+unset YOLO_OFFLINE
+PYTHONPATH=src python -m fracture.utils.pretrained \
+  --config configs/fracture_25d_p2_pretrained.yaml
+```
+
+Verify the transfer into the actual custom P2 model while offline:
+
+```bash
+YOLO_OFFLINE=1 PYTHONPATH=src python -m fracture.utils.pretrained \
+  --config configs/fracture_25d_p2_pretrained.yaml \
+  --verify-transfer \
+  --output reports/fold0_initialization_ab/pretrained_initialization_audit.json
+```
+
+Expected architecture evidence is four detection strides `[4, 8, 16, 32]`. The verified checkpoint used during development had SHA-256 `85a76fe86dd8afe384648546b56a7a78580c7cb7b404fc595f97969322d502d5`; the command fails if cached metadata and checkpoint content disagree.
+
+### 3. Render the immutable V1 2.5D dataset
+
+`/dev/shm` is volatile, so run this after every server reboot if the directory is absent. Generation deliberately refuses to overwrite an existing version.
+
+```bash
+cd /absolute/path/to/fracture
+conda activate maskfo
+
+if [ ! -f /dev/shm/iaaa_fracture/fracture_dataset_v1_25d_p2/fold_0.yaml ]; then
+  PYTHONPATH=src python -m fracture.data.prepare_yolo \
+    --config configs/fracture_25d_p2_pretrained.yaml
+fi
+
+cat /dev/shm/iaaa_fracture/fracture_dataset_v1_25d_p2/fold_stats.csv
+sha256sum /dev/shm/iaaa_fracture/fracture_dataset_v1_25d_p2/manifest.csv
+```
+
+For the frozen dataset, Fold 0 should contain 816 sampled training images (408 positive and 408 negative) and 1,633 validation images. The full manifest should contain 7,508 images, 260 positive slices, and 356 boxes.
+
+### 4. Start the new Fold-0 run in tmux
+
+First ensure the chosen output name does not already exist. Never overwrite the historical V2 directory or a partial experiment—choose a new run name if necessary.
+
+```bash
+cd /absolute/path/to/fracture
+FRACTURE_RUN=v2_25d_p2_coco_pretrained
+test ! -e "outputs/fold_0/${FRACTURE_RUN}"
+
+tmux new-session -d -s fracture -c "$PWD" \
+  "exec env YOLO_CONFIG_DIR=/tmp/ultralytics-maskfo PYTHONPATH=src YOLO_OFFLINE=1 \
+  conda run --no-capture-output -n maskfo python \
+  -m fracture.training.train_detector \
+  --config configs/fracture_25d_p2_pretrained.yaml \
+  --fold 0 \
+  --dataset-yaml /dev/shm/iaaa_fracture/fracture_dataset_v1_25d_p2/fold_0.yaml \
+  --run-name ${FRACTURE_RUN}"
+
+tmux set-option -t fracture remain-on-exit on
+```
+
+Monitor it from another terminal:
+
+```bash
+tmux list-sessions
 tmux attach -t fracture
 ```
 
-Detach without stopping training by pressing `Ctrl+B`, releasing the keys, and then pressing `D`. Check the session and GPU from another terminal with:
+Detach without stopping training with `Ctrl+B`, then `D`. Non-interactive monitoring commands are:
 
 ```bash
-tmux ls
+tmux capture-pane -p -t fracture -S -80
 watch -n 2 nvidia-smi
-tail -f outputs/fold_0/detector/results.csv
+tail -f outputs/fold_0/v2_25d_p2_coco_pretrained/results.csv
 ```
 
-For a fresh fold-0 run rather than a resume, omit `--resume-from` and add `--epochs 100 --batch-size 1 --workers 2`. Use a new `--run-name` if the requested output directory already exists.
+`results.csv` appears after the first completed epoch. Early stopping uses patience 35; do not select the model from one early epoch.
+
+### 5. Resume the new run after an interruption
+
+Use the new experiment's `last.pt`, never the historical V2 checkpoint. The checkpoint restores its original optimizer, scheduler, dataset, seed, and run directory.
+
+```bash
+cd /absolute/path/to/fracture
+test -f outputs/fold_0/v2_25d_p2_coco_pretrained/weights/last.pt
+
+tmux new-session -d -s fracture-resume -c "$PWD" \
+  "exec env YOLO_CONFIG_DIR=/tmp/ultralytics-maskfo PYTHONPATH=src YOLO_OFFLINE=1 \
+  conda run --no-capture-output -n maskfo python \
+  -m fracture.training.train_detector \
+  --config configs/fracture_25d_p2_pretrained.yaml \
+  --fold 0 \
+  --dataset-yaml /dev/shm/iaaa_fracture/fracture_dataset_v1_25d_p2/fold_0.yaml \
+  --run-name v2_25d_p2_coco_pretrained_resume \
+  --resume-from outputs/fold_0/v2_25d_p2_coco_pretrained/weights/last.pt"
+
+tmux set-option -t fracture-resume remain-on-exit on
+```
+
+### 6. Evaluate both detectors identically
+
+Run these only after training has completed. Both commands use 768-pixel inference, raw maximum slice confidence, and no calibration. They also save slice boxes for error analysis.
+
+```bash
+cd /absolute/path/to/fracture
+conda activate maskfo
+
+YOLO_OFFLINE=1 PYTHONPATH=src python -m fracture.evaluation.predict_fold \
+  --config configs/fracture_25d_p2_ab_local_transfer.yaml \
+  --fold 0 \
+  --weights outputs/fold_0/v1_25d_p2/weights/best.pt \
+  --output-dir reports/fold0_initialization_ab \
+  --name baseline_v2
+
+YOLO_OFFLINE=1 PYTHONPATH=src python -m fracture.evaluation.predict_fold \
+  --config configs/fracture_25d_p2_pretrained.yaml \
+  --fold 0 \
+  --weights outputs/fold_0/v2_25d_p2_coco_pretrained/weights/best.pt \
+  --output-dir reports/fold0_initialization_ab \
+  --name coco_pretrained_v2
+```
+
+Create the full comparison, score distributions, box-size analysis, review CSVs, isolated-fracture QWK, and visual cases:
+
+```bash
+YOLO_OFFLINE=1 PYTHONPATH=src python -m fracture.utils.pretrained \
+  --config configs/fracture_25d_p2_ab_local_transfer.yaml \
+  --verify-transfer \
+  --output reports/fold0_initialization_ab/baseline_initialization_audit.json
+
+YOLO_OFFLINE=1 PYTHONPATH=src python -m fracture.evaluation.compare_initializations \
+  --config configs/fracture_25d_p2_pretrained.yaml \
+  --baseline-studies reports/fold0_initialization_ab/baseline_v2.csv \
+  --pretrained-studies reports/fold0_initialization_ab/coco_pretrained_v2.csv \
+  --baseline-slices reports/fold0_initialization_ab/baseline_v2_slices.csv \
+  --pretrained-slices reports/fold0_initialization_ab/coco_pretrained_v2_slices.csv \
+  --baseline-training-results outputs/fold_0/v1_25d_p2/results.csv \
+  --pretrained-training-results outputs/fold_0/v2_25d_p2_coco_pretrained/results.csv \
+  --baseline-initialization reports/fold0_initialization_ab/baseline_initialization_audit.json \
+  --pretrained-initialization reports/fold0_initialization_ab/pretrained_initialization_audit.json \
+  --output-dir reports/fold0_initialization_ab
+```
+
+Do not fit a final aggregator or calibrator on Fold 0; it has only six positive studies. Do not start folds 1–4 until this report supports that decision.
+
+### 7. Offline acceptance and runtime checks
+
+```bash
+YOLO_OFFLINE=1 PYTHONPATH=src python scripts/acceptance_smoke.py \
+  --weights outputs/fold_0/v2_25d_p2_coco_pretrained/weights/best.pt \
+  --study-dir iaaa-contest-bct/Data/training/2265 \
+  --study-dir iaaa-contest-bct/Data/training/1734 \
+  --input-mode 2.5d \
+  --image-size 768 \
+  --aggregation-method max \
+  --calibration-method none \
+  --device 0 \
+  --output reports/fold0_initialization_ab/acceptance_smoke.json
+
+YOLO_OFFLINE=1 PYTHONPATH=src python -m fracture.inference.benchmark \
+  --weights outputs/fold_0/v2_25d_p2_coco_pretrained/weights/best.pt \
+  --study-dir iaaa-contest-bct/Data/training/2265 \
+  --study-dir iaaa-contest-bct/Data/training/1734 \
+  --input-mode 2.5d \
+  --image-size 768 \
+  --aggregation-method max \
+  --calibration-method none \
+  --device 0 \
+  --output reports/fold0_initialization_ab/runtime_benchmark.json
+```
+
+For a stronger p95 estimate, append additional positive, negative, large, and JPEG-Lossless studies with repeated `--study-dir` arguments.
+
+To prove final inference does not need the generic development checkpoint, move it temporarily, run the smoke test above, and restore it even if the test fails:
+
+```bash
+mv artifacts/pretrained/yolo11s.pt /tmp/yolo11s.pt.temporarily-unavailable
+
+YOLO_OFFLINE=1 PYTHONPATH=src python scripts/acceptance_smoke.py \
+  --weights outputs/fold_0/v2_25d_p2_coco_pretrained/weights/best.pt \
+  --study-dir iaaa-contest-bct/Data/training/2265 \
+  --input-mode 2.5d --image-size 768 \
+  --aggregation-method max --calibration-method none \
+  --device 0 \
+  --output reports/fold0_initialization_ab/checkpoint_independence_smoke.json
+
+mv /tmp/yolo11s.pt.temporarily-unavailable artifacts/pretrained/yolo11s.pt
+```
 
 ## Latest fold-0 results
 
@@ -125,9 +343,39 @@ An end-to-end held-out inference smoke test produced:
 
 The current study score is the maximum slice-detection confidence with no fitted aggregator or calibration model. It is therefore an uncalibrated ranking score, not a clinically meaningful probability. The small positive/negative separation and low detection metrics make this a working pipeline baseline, not a deployment-ready or competition-ready model. Detailed training metrics are in `outputs/fold_0/detector/results.csv`; the inference smoke report is in `reports/inference_smoke_fold0.json`.
 
+Full inference across all 68 held-out fold-0 studies gave AUROC `0.74866` and PR-AUC `0.32299`. At the official `0.5` threshold it produced zero true positives, six false negatives, and specificity `1.0`. An exploratory threshold of `0.203125` reached sensitivity `0.6667`, specificity `0.7903`, and F1 `0.3478`; this threshold is diagnostic only and must not be treated as an unbiased final threshold. See `reports/fold0_v0_single_metrics.json` and `reports/fold0_v0_single.csv`.
+
+## Active V2 experiment: 2.5D + P2
+
+V2 addresses the observed baseline weaknesses without downloading external weights:
+
+- Three adjacent CT slices (`z-1`, `z`, `z+1`) are used as the input channels.
+- A stride-4 P2 detection head is added for small fracture boxes.
+- Input resolution increases from 640 to 768 pixels.
+- Fold-0 training sampling changes from 204 positive/1,020 negative images to 408 positive/408 negative samples.
+- Compatible backbone and neck parameters initialize from the locally trained V0 checkpoint; 297 of 593 tensors transfer into the modified architecture.
+- AdamW uses a lower `0.0005` learning rate, cosine decay, and patience 35.
+- Batch size 2 uses approximately 2.33 GB of the RTX 3050's available VRAM.
+- `YOLO_OFFLINE=1` prevents package/version and weight network checks.
+
+### Historical V2 status
+
+The existing local-transfer V2 run is incomplete but preserved as the fixed comparison baseline. It contains 22 completed epochs; its best validation result occurred at displayed epoch 2:
+
+| Metric | Existing V2 best |
+| --- | ---: |
+| Precision | `0.20050` |
+| Recall | `0.06250` |
+| mAP50 | `0.04758` |
+| mAP50-95 | `0.02694` |
+
+Its final completed epoch (22) had precision `0.08269`, recall `0.13750`, mAP50 `0.01915`, and mAP50-95 `0.00943`. These detector results are poor and motivate the controlled initialization experiment, but they do not prove that COCO initialization is better. Use the commands in the second-server handoff to measure that claim.
+
+Do not resume into `outputs/fold_0/v1_25d_p2/`, because Ultralytics would modify the historical baseline. Do not run folds 1–4 until the Fold-0 baseline-versus-pretrained comparison is complete.
+
 ## Improvement checklist
 
-- [ ] Obtain explicit approval for local pretrained weights and fine-tune them instead of training YOLO11s from random initialization.
+- [x] Add explicit, mutually exclusive random/local-transfer/official-COCO initialization modes with cached checkpoint provenance.
 - [ ] Train all five patient-grouped folds and report mean and per-fold detection and study-level metrics.
 - [ ] Generate strictly out-of-fold slice and study predictions for model selection, aggregation, calibration, and error analysis.
 - [ ] Ensemble the five fold models at inference time and compare it with each individual fold model.
@@ -154,6 +402,8 @@ predictor = FracturePredictor(
     calibrator_path="models/calibrator.joblib",  # omit for none
     aggregation_method="logistic",
     calibration_method="platt",
+    input_mode="2.5d",
+    image_size=768,
 )
 fracture_prob = predictor.predict(study_dir)
 ```

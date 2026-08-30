@@ -3,14 +3,14 @@ from __future__ import annotations
 import importlib.metadata as metadata
 import platform, sys
 
-REQUIRED = {"numpy": (2, 0), "pydicom": (3, 0), "torch": (2, 10), "ultralytics": (8, 3, 240), "pandas": None, "scikit-learn": None, "joblib": None, "PyYAML": None}
+REQUIRED = {"numpy": (1, 26), "pydicom": (3, 0), "torch": (2, 1), "ultralytics": (8, 4, 129), "pandas": None, "scikit-learn": None, "joblib": None, "PyYAML": None}
 
 
 def main() -> int:
     errors: list[str] = []
     print(f"Python: {platform.python_version()}")
-    if sys.version_info[:2] != (3, 12):
-        errors.append("Python must be >=3.12,<3.13")
+    if not (sys.version_info >= (3, 10) and sys.version_info < (3, 13)):
+        errors.append("Python must be >=3.10,<3.13")
     for package, minimum in REQUIRED.items():
         try:
             version = metadata.version(package)

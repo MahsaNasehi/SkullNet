@@ -1,0 +1,39 @@
+{
+  "mode": "local_transfer",
+  "resumed_from_checkpoint": true,
+  "target_architecture": "/home/mahsa-nasehi/Desktop/New Folder/fracture/configs/yolo11s_p2.yaml",
+  "detection_strides": [
+    4.0,
+    8.0,
+    16.0,
+    32.0
+  ],
+  "p2_stride4_active": true,
+  "checkpoint_path": "/home/mahsa-nasehi/Desktop/New Folder/fracture/outputs/fold_0/v1_25d_p2/weights/last.pt",
+  "checkpoint_metadata": {
+    "name": "last.pt",
+    "local_path": "/home/mahsa-nasehi/Desktop/New Folder/fracture/outputs/fold_0/v1_25d_p2/weights/last.pt",
+    "source": "resumed_training_checkpoint",
+    "sha256": "e703c84eb967d0128d2f2922bea7c9baa42d8b52b99f5ee8d431b294b4827cdf",
+    "file_size_bytes": 77518693
+  },
+  "transfer": null,
+  "runtime": {
+    "python": "3.10.12",
+    "torch": "2.1.2+cu121",
+    "cuda": "12.1",
+    "ultralytics": "8.4.129",
+    "gpu": "NVIDIA GeForce RTX 3050 Laptop GPU"
+  },
+  "git_commit": "602eed008fb8aa281b12b5c95ad62cee70994c28",
+  "config_path": "/home/mahsa-nasehi/Desktop/New Folder/fracture/configs/fracture_25d_p2_ab_local_transfer.yaml",
+  "config_sha256": "b5e748cedb25602a834005704e7ad19b4cba33a17e900936474dfbbe287c017e",
+  "dataset": {
+    "dataset_yaml": "/dev/shm/iaaa_fracture/fracture_dataset_v1_25d_p2/fold_0.yaml",
+    "dataset_yaml_sha256": "aada26ab097744ec9080718311dc05b585c9ebe464cab44d037003859397c667",
+    "manifest_path": "/dev/shm/iaaa_fracture/fracture_dataset_v1_25d_p2/manifest.csv",
+    "manifest_sha256": "3da778f6f2e3b1fdce44cf6b9bc391a45698abfd5aff11b47a3624718acf94fa",
+    "split_path": "/home/mahsa-nasehi/Desktop/New Folder/fracture/splits/folds.json",
+    "split_sha256": "978659864ceb4c03885313eaca18b04790371182b69727289bc74677630a2b4c"
+  }
+}

@@ -11,9 +11,17 @@ class SlicePrediction:
     max_confidence: float; num_detections: int; boxes: list[list[float]]; scores: list[float]
 
 
-def predict_slices(records: list[Any], detector: Any, input_mode: str = "single", window_level: float = 500, window_width: float = 2500, batch_size: int = 8) -> list[SlicePrediction]:
+def predict_slices(
+    records: list[Any],
+    detector: Any,
+    input_mode: str = "single",
+    window_level: float = 500,
+    window_width: float = 2500,
+    batch_size: int = 8,
+    boundary_mode: str = "repeat",
+) -> list[SlicePrediction]:
     windows = [bone_window(x.hu, window_level, window_width, x.photometric_interpretation == "MONOCHROME1") for x in records]
-    images = [make_input(windows, i, input_mode) for i in range(len(windows))]
+    images = [make_input(windows, i, input_mode, boundary_mode=boundary_mode) for i in range(len(windows))]
     output: list[SlicePrediction] = []
     for start in range(0, len(images), batch_size):
         detections = detector.predict_batch(images[start:start + batch_size])

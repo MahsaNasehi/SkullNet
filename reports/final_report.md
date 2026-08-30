@@ -1,19 +1,38 @@
 # Fracture workstream report
 
-Status: dataset audit and source implementation complete; pixel-level preparation, training, model evaluation, and final acceptance remain pending the official dependency environment and trained local artifacts.
+Status: core study-level path is implemented (OOF aggregator selection, calibration,
+isolated fracture QWK, hard-negative/adjacent sampling hooks). Full 5-fold detector
+OOF remains the main empirical blocker for excellent competition metrics.
 
-## Inspection findings
+## Dataset
 
-- 338 studies from 320 patients; 28 fracture-positive and 310 fracture-negative studies.
-- 7,683 DICOM files; metadata covers 7,508 and leaves 175 extra slices unknown.
-- 5,176 JSON annotations: 260 positive slices, 4,916 explicit empty-box slices, and 356 fracture boxes.
-- Metadata marks 7,248 slices negative, including 2,332 without JSON. Every existing JSON agrees with `SkullFracture`.
-- All annotations use `boxes_xywh` and 512×512 shapes; no malformed, non-positive, or out-of-frame boxes were found.
-- Box area ranges from 70 to 101,695 px² (median 2,200 px²).
-- All 7,683 DICOM headers are 512×512 MONOCHROME2 and provide physical ordering fields. Transfer syntaxes: 3,148 JPEG Lossless, 2,256 Explicit VR Little Endian, and 2,279 Implicit VR Little Endian.
-- Twenty-two studies have more DICOM files than metadata declares. Those extra 175 slices remain unknown and are excluded from detector negatives.
-- No corrected annotations existed; a separate `annotations_corrected` root was created without changing organizer data.
-- Fixed five-fold patient-grouped splits contain 68/68/68/67/67 studies and 6/6/6/5/5 positive studies.
-- Python 3.12.3 exists locally, but required imaging/training packages are absent. Pixel decoding, training, metrics, re-annotation effect, runtime, and VRAM cannot yet be truthfully reported.
+- 338 studies / 320 patients; 28 fracture-positive, 310 negative
+- 7,683 DICOMs; 5,176 JSONs; 260 positive slices; 356 boxes
+- Missing JSON stays unknown (`missing_json_means_negative: false`)
+- Patient-grouped 5-fold split frozen in `splits/folds.json`
 
-Run pixel decoding, preparation, training, OOF evaluation, and acceptance commands described in the README in the official environment. Do not replace pending metrics with invented values.
+## Current empirical snapshot (fold-0 V0 single, max baseline)
+
+- Study AUROC ≈ 0.749, PR-AUC ≈ 0.323
+- At official threshold 0.5: sensitivity 0.0 / specificity 1.0 (scores under-confident)
+- Isolated fracture QWK ≈ 0.944 when all study scores stay < 0.5 (triage mostly driven by ICH/MLS)
+
+## What was improved in code
+
+1. Nested/stratified OOF fitting for logistic aggregation + auto-select among `max` / `consecutive` / `logistic`
+2. Isolated fracture QWK using GT ICH volumes (area→mL) + MLS + predicted `fracture_prob`
+3. `consecutive` aggregator down-weights single-slice spikes (suture-like FPs)
+4. Hard-negative CSV + fracture-adjacent oversampling in `prepare_yolo`
+5. Explicit YOLO `box/cls/dfl` gains in V2 config
+6. `scripts/train_eval_all_folds.sh` and `scripts/acceptance_smoke.py`
+7. Expanded unit tests (13 passing)
+
+## Required next empirical steps for excellent results
+
+1. Regenerate `/dev/shm` YOLO dataset after reboot
+2. Train folds 1–4 (fold 0 V2 may already exist): `scripts/train_eval_all_folds.sh`
+3. Re-fit OOF on all five fold CSVs; keep selected aggregator + calibrator in `models/`
+4. Mine hard negatives from OOF FPs on verified negatives; rebuild dataset version; retrain
+5. Human re-annotation from OOF disagreements only; compare original vs corrected on locked folds
+6. Run acceptance smoke offline with local weights/joblib only
+7. Prefer model selection by isolated fracture QWK and sensitivity@0.5, not detector mAP

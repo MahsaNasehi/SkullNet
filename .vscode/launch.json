@@ -1,0 +1,195 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "00 Check Environment",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "fracture.utils.check_environment",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src",
+        "YOLO_OFFLINE": "1",
+        "YOLO_CONFIG_DIR": "/tmp/ultralytics-maskfo"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "python": "/home/mahsa-nasehi/miniconda3/envs/maskfo/bin/python"
+    },
+    {
+      "name": "01 Debug: load one DICOM study",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/.vscode/debug_scripts/01_load_study.py",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src",
+        "FRACTURE_STUDY_DIR": "${workspaceFolder}/iaaa-contest-bct/Data/training/1011"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "python": "/home/mahsa-nasehi/miniconda3/envs/maskfo/bin/python"
+    },
+    {
+      "name": "02 Debug: window + 2.5D input",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/.vscode/debug_scripts/02_window_input.py",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src",
+        "FRACTURE_STUDY_DIR": "${workspaceFolder}/iaaa-contest-bct/Data/training/1011"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "python": "/home/mahsa-nasehi/miniconda3/envs/maskfo/bin/python"
+    },
+    {
+      "name": "03 Debug: annotation resolve + YOLO label",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/.vscode/debug_scripts/03_annotation.py",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src",
+        "FRACTURE_STUDY_DIR": "${workspaceFolder}/iaaa-contest-bct/Data/training/1011"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "python": "/home/mahsa-nasehi/miniconda3/envs/maskfo/bin/python"
+    },
+    {
+      "name": "04 Debug: FracturePredictor on one study",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/.vscode/debug_scripts/04_predict_study.py",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src",
+        "YOLO_OFFLINE": "1",
+        "YOLO_CONFIG_DIR": "/tmp/ultralytics-maskfo",
+        "FRACTURE_STUDY_DIR": "${workspaceFolder}/iaaa-contest-bct/Data/training/2265",
+        "FRACTURE_WEIGHTS": "${workspaceFolder}/outputs/fold_0/v1_25d_p2/weights/best.pt"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "python": "/home/mahsa-nasehi/miniconda3/envs/maskfo/bin/python"
+    },
+    {
+      "name": "05 Debug: aggregation features",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/.vscode/debug_scripts/05_aggregation.py",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "python": "/home/mahsa-nasehi/miniconda3/envs/maskfo/bin/python"
+    },
+    {
+      "name": "06 Pytest: test_core (stop on fail)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": ["-q", "tests/test_core.py", "-x"],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "python": "/home/mahsa-nasehi/miniconda3/envs/maskfo/bin/python"
+    },
+    {
+      "name": "07 Module: data.audit (fold config)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "fracture.data.audit",
+      "args": ["--config", "configs/fracture_25d_p2.yaml"],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "python": "/home/mahsa-nasehi/miniconda3/envs/maskfo/bin/python"
+    },
+    {
+      "name": "08 Module: prepare_yolo (SLOW / needs free /dev/shm)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "fracture.data.prepare_yolo",
+      "args": ["--config", "configs/fracture_25d_p2.yaml"],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "python": "/home/mahsa-nasehi/miniconda3/envs/maskfo/bin/python"
+    },
+    {
+      "name": "09 Module: train_detector SMOKE (2 epochs)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "fracture.training.train_detector",
+      "args": [
+        "--config", "configs/fracture_25d_p2.yaml",
+        "--fold", "0",
+        "--dataset-yaml", "/dev/shm/iaaa_fracture/fracture_dataset_v1_25d_p2/fold_0.yaml",
+        "--epochs", "2",
+        "--batch-size", "2",
+        "--workers", "0",
+        "--run-name", "debug_smoke"
+      ],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src",
+        "YOLO_OFFLINE": "1",
+        "YOLO_CONFIG_DIR": "/tmp/ultralytics-maskfo"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "python": "/home/mahsa-nasehi/miniconda3/envs/maskfo/bin/python"
+    },
+    {
+      "name": "10 Module: predict_fold (held-out metrics)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "fracture.evaluation.predict_fold",
+      "args": [
+        "--config", "configs/fracture_25d_p2.yaml",
+        "--fold", "0",
+        "--weights", "outputs/fold_0/v1_25d_p2/weights/best.pt",
+        "--output-dir", "reports",
+        "--name", "debug_fold0_v1"
+      ],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src",
+        "YOLO_OFFLINE": "1",
+        "YOLO_CONFIG_DIR": "/tmp/ultralytics-maskfo"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "python": "/home/mahsa-nasehi/miniconda3/envs/maskfo/bin/python"
+    },
+    {
+      "name": "11 Current File",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${file}",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src",
+        "YOLO_OFFLINE": "1",
+        "YOLO_CONFIG_DIR": "/tmp/ultralytics-maskfo"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "python": "/home/mahsa-nasehi/miniconda3/envs/maskfo/bin/python"
+    }
+  ]
+}

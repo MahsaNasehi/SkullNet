@@ -10,3 +10,7 @@
 # Locally rendered YOLO dataset variants, if output_root is changed from /dev/shm.
 /fracture_dataset*/
 /outputs/fracture_dataset*/
+
+# Official development-time pretrained cache. Keep provenance metadata in git,
+# but never commit the binary checkpoint; final inference uses trained best.pt.
+/artifacts/pretrained/*.pt

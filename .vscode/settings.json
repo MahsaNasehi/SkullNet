@@ -1,0 +1,6 @@
+{
+  "python.defaultInterpreterPath": "/home/mahsa-nasehi/miniconda3/envs/maskfo/bin/python",
+  "python.testing.pytestEnabled": true,
+  "python.testing.pytestArgs": ["tests"],
+  "python.analysis.extraPaths": ["${workspaceFolder}/src"]
+}

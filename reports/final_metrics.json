@@ -1,4 +1,90 @@
 {
-  "status": "pending_training_and_acceptance",
-  "reason": "Dataset audit completed, but the available Python 3.12 environment lacks pydicom/codecs, PyTorch, Ultralytics, scikit-learn, and trained local artifacts."
+  "auroc": 0.7486559139784947,
+  "pr_auc": 0.3229909387997624,
+  "sensitivity_0_5": 0.0,
+  "specificity_0_5": 1.0,
+  "precision_0_5": 0.0,
+  "f1_0_5": 0.0,
+  "brier": 0.07991148998611772,
+  "log_loss": 0.2951685567173128,
+  "tp": 0,
+  "tn": 62,
+  "fp": 0,
+  "fn": 6,
+  "isolated_fracture_qwk": 0.9442013129102844,
+  "n_studies": 68,
+  "gt_triage_counts": {
+    "0": 29,
+    "1": 14,
+    "2": 25
+  },
+  "pred_triage_counts": {
+    "0": 29,
+    "1": 14,
+    "2": 25
+  },
+  "selected_aggregator": "max",
+  "calibration": "platt",
+  "n_positive": 6,
+  "candidate_comparison": {
+    "max": {
+      "auroc": 0.7486559139784947,
+      "pr_auc": 0.3229909387997624,
+      "sensitivity_0_5": 0.0,
+      "specificity_0_5": 1.0,
+      "precision_0_5": 0.0,
+      "f1_0_5": 0.0,
+      "brier": 0.07756895421251128,
+      "log_loss": 0.28221581423428843,
+      "tp": 0,
+      "tn": 62,
+      "fp": 0,
+      "fn": 6,
+      "isolated_fracture_qwk": 0.9442013129102844
+    },
+    "consecutive": {
+      "auroc": 0.7043010752688172,
+      "pr_auc": 0.2994588744588744,
+      "sensitivity_0_5": 0.0,
+      "specificity_0_5": 1.0,
+      "precision_0_5": 0.0,
+      "f1_0_5": 0.0,
+      "brier": 0.07793667203826839,
+      "log_loss": 0.2795160782068272,
+      "tp": 0,
+      "tn": 62,
+      "fp": 0,
+      "fn": 6,
+      "isolated_fracture_qwk": 0.9442013129102844
+    },
+    "logistic": {
+      "auroc": 0.4059139784946237,
+      "pr_auc": 0.08592155388283108,
+      "sensitivity_0_5": 0.0,
+      "specificity_0_5": 0.7580645161290323,
+      "precision_0_5": 0.0,
+      "f1_0_5": 0.0,
+      "brier": 0.1975512516846597,
+      "log_loss": 0.6054678480683349,
+      "tp": 0,
+      "tn": 47,
+      "fp": 15,
+      "fn": 6,
+      "isolated_fracture_qwk": 0.8633754305396096
+    }
+  },
+  "uncalibrated_selected": {
+    "auroc": 0.7486559139784947,
+    "pr_auc": 0.3229909387997624,
+    "sensitivity_0_5": 0.0,
+    "specificity_0_5": 1.0,
+    "precision_0_5": 0.0,
+    "f1_0_5": 0.0,
+    "brier": 0.07756895421251128,
+    "log_loss": 0.28221581423428843,
+    "tp": 0,
+    "tn": 62,
+    "fp": 0,
+    "fn": 6
+  }
 }

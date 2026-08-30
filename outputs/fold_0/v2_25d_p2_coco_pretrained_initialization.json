@@ -1,0 +1,65 @@
+{
+  "mode": "pretrained",
+  "resumed_from_checkpoint": false,
+  "target_architecture": "/home/mahsa-nasehi/Desktop/New Folder/fracture/configs/yolo11s_p2.yaml",
+  "detection_strides": [
+    4.0,
+    8.0,
+    16.0,
+    32.0
+  ],
+  "p2_stride4_active": true,
+  "checkpoint_path": "/home/mahsa-nasehi/Desktop/New Folder/fracture/artifacts/pretrained/yolo11s.pt",
+  "checkpoint_metadata": {
+    "name": "yolo11s.pt",
+    "local_path": "/home/mahsa-nasehi/Desktop/New Folder/fracture/artifacts/pretrained/yolo11s.pt",
+    "source": "official_ultralytics_assets",
+    "source_repository": "ultralytics/assets",
+    "source_release": "v8.4.0",
+    "pretraining_dataset": "COCO",
+    "sha256": "85a76fe86dd8afe384648546b56a7a78580c7cb7b404fc595f97969322d502d5",
+    "file_size_bytes": 19313732,
+    "ultralytics_version": "8.4.129",
+    "download_timestamp": "2026-08-30T14:44:15.633473+00:00"
+  },
+  "transfer": {
+    "target_items": 593,
+    "compatible_items": 297,
+    "transferred_items": 297,
+    "changed_compatible_items": 297,
+    "newly_initialized_items": 296,
+    "transfer_fraction": 0.5008431703204047,
+    "target_parameters": 9605652,
+    "transferred_parameters": 6032345,
+    "newly_initialized_parameters": 3573307,
+    "parameter_transfer_fraction": 0.6279995361064507,
+    "backbone_tensor_verified": true,
+    "backbone_tensor_key": "model.0.conv.weight",
+    "detection_strides": [
+      4.0,
+      8.0,
+      16.0,
+      32.0
+    ],
+    "detection_scales": 4,
+    "p2_stride4_active": true
+  },
+  "runtime": {
+    "python": "3.10.12",
+    "torch": "2.1.2+cu121",
+    "cuda": "12.1",
+    "ultralytics": "8.4.129",
+    "gpu": "NVIDIA GeForce RTX 3050 Laptop GPU"
+  },
+  "git_commit": "602eed008fb8aa281b12b5c95ad62cee70994c28",
+  "config_path": "/home/mahsa-nasehi/Desktop/New Folder/fracture/configs/fracture_25d_p2_pretrained.yaml",
+  "config_sha256": "b48d4ec33a43f42b4ce19193daf945c60f1da6aa9518475c60d163bd2726d85e",
+  "dataset": {
+    "dataset_yaml": "/dev/shm/iaaa_fracture/fracture_dataset_v1_25d_p2/fold_0.yaml",
+    "dataset_yaml_sha256": "aada26ab097744ec9080718311dc05b585c9ebe464cab44d037003859397c667",
+    "manifest_path": "/dev/shm/iaaa_fracture/fracture_dataset_v1_25d_p2/manifest.csv",
+    "manifest_sha256": "3da778f6f2e3b1fdce44cf6b9bc391a45698abfd5aff11b47a3624718acf94fa",
+    "split_path": "/home/mahsa-nasehi/Desktop/New Folder/fracture/splits/folds.json",
+    "split_sha256": "978659864ceb4c03885313eaca18b04790371182b69727289bc74677630a2b4c"
+  }
+}

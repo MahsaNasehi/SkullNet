@@ -1,0 +1,23 @@
+{
+  "auroc": 0.7486559139784947,
+  "pr_auc": 0.3229909387997624,
+  "sensitivity_0_5": 0.0,
+  "specificity_0_5": 1.0,
+  "precision_0_5": 0.0,
+  "f1_0_5": 0.0,
+  "brier": 0.07756895436357532,
+  "log_loss": 0.2822158144405222,
+  "tp": 0,
+  "tn": 62,
+  "fp": 0,
+  "fn": 6,
+  "fold": 0,
+  "num_studies": 68,
+  "num_positive_studies": 6,
+  "elapsed_seconds": 54.89327014700007,
+  "exploratory_best_f1_threshold": 0.203125,
+  "exploratory_best_f1": 0.34782608695652173,
+  "exploratory_sensitivity": 0.6666666666666666,
+  "exploratory_specificity": 0.7903225806451613,
+  "peak_vram_bytes": 221833216
+}

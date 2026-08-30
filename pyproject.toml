@@ -6,11 +6,14 @@ build-backend = "setuptools.build_meta"
 name = "iaaa-fracture"
 version = "0.1.0"
 description = "Offline skull-fracture workstream for IAAA 2026 Brain CT triage"
-requires-python = ">=3.12,<3.13"
+requires-python = ">=3.10,<3.13"
 dependencies = [
-  "numpy>=2,<2.3", "pandas", "pydicom>=3.0.1", "PyYAML",
-  "torch>=2.10,<3", "ultralytics>=8.3.240,<9", "opencv-python",
-  "scikit-learn", "joblib", "SimpleITK",
+  "numpy>=1.26,<2", "pandas>=2.2,<2.3", "pydicom>=3.0.1,<4", "PyYAML>=6,<7",
+  "torch>=2.1,<2.2", "torchvision>=0.16,<0.17", "ultralytics==8.4.129",
+  "opencv-python>=4.9,<4.10", "scikit-learn>=1.6,<1.7", "joblib>=1.5,<1.6",
+  "SimpleITK>=2.5,<2.6", "pylibjpeg>=2.1,<2.2",
+  "pylibjpeg-libjpeg>=2.2,<2.3", "pylibjpeg-openjpeg>=2.3,<2.4",
+  "albumentations>=1.4.24,<1.5",
 ]
 
 [project.optional-dependencies]
@@ -22,4 +25,3 @@ where = ["src"]
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 testpaths = ["tests"]
-
