@@ -37,6 +37,11 @@ def main() -> None:
     parser.add_argument("--weights", required=True)
     parser.add_argument("--output-dir", default="reports")
     parser.add_argument("--name", default="fold_predictions")
+    parser.add_argument(
+        "--detection-confidence",
+        type=float,
+        help="Override the detector confidence floor while retaining raw boxes for threshold-sensitivity analysis.",
+    )
     args = parser.parse_args()
 
     cfg = load_config(args.config)
@@ -49,9 +54,14 @@ def main() -> None:
     data = cfg["data"]
     metadata = load_metadata(require_path(cfg, "data", "metadata_path"))
     series_col = data["series_id_column"]
+    patient_col = data["patient_id_column"]
     label_col = data["fracture_label_column"]
     study_labels = {
         str(series): int(bool(group[label_col].max()))
+        for series, group in metadata.groupby(series_col)
+    }
+    patient_ids = {
+        str(series): str(group[patient_col].iloc[0])
         for series, group in metadata.groupby(series_col)
     }
 
@@ -66,7 +76,11 @@ def main() -> None:
     load_started = time.perf_counter()
     detector = Detector(
         args.weights,
-        confidence=float(inference["detection_confidence"]),
+        confidence=float(
+            args.detection_confidence
+            if args.detection_confidence is not None
+            else inference["detection_confidence"]
+        ),
         iou=float(inference["nms_iou"]),
         device=cfg["training"]["device"],
         fp16=bool(inference["fp16"]),
@@ -93,10 +107,11 @@ def main() -> None:
         )
         scores = [item.max_confidence for item in predictions]
         counts = [item.num_detections for item in predictions]
-        features = aggregation_features(scores, counts)
+        features = aggregation_features(scores, counts, thresholds=(0.05, 0.1, 0.3, 0.5))
         study_seconds = time.perf_counter() - study_started
         rows.append({
             "series_id": series_id,
+            "patient_id": patient_ids[series_id],
             "y_true": study_labels[series_id],
             "fold": args.fold,
             "slice_scores": ";".join(f"{value:.8g}" for value in scores),
@@ -119,6 +134,7 @@ def main() -> None:
             ]
             slice_rows.append({
                 "series_id": series_id,
+                "patient_id": patient_ids[series_id],
                 "sop_uid": record.sop_uid,
                 "slice_index": prediction.slice_index,
                 "physical_position": prediction.physical_position,
