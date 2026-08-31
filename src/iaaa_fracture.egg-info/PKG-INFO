@@ -1,0 +1,22 @@
+Metadata-Version: 2.4
+Name: iaaa-fracture
+Version: 0.1.0
+Summary: Offline skull-fracture workstream for IAAA 2026 Brain CT triage
+Requires-Python: <3.13,>=3.10
+Requires-Dist: numpy<2,>=1.26
+Requires-Dist: pandas<2.3,>=2.2
+Requires-Dist: pydicom<4,>=3.0.1
+Requires-Dist: PyYAML<7,>=6
+Requires-Dist: torch<2.2,>=2.1
+Requires-Dist: torchvision<0.17,>=0.16
+Requires-Dist: ultralytics==8.4.129
+Requires-Dist: opencv-python<4.10,>=4.9
+Requires-Dist: scikit-learn<1.7,>=1.6
+Requires-Dist: joblib<1.6,>=1.5
+Requires-Dist: SimpleITK<2.6,>=2.5
+Requires-Dist: pylibjpeg<2.2,>=2.1
+Requires-Dist: pylibjpeg-libjpeg<2.3,>=2.2
+Requires-Dist: pylibjpeg-openjpeg<2.4,>=2.3
+Requires-Dist: albumentations<1.5,>=1.4.24
+Provides-Extra: dev
+Requires-Dist: pytest>=8; extra == "dev"

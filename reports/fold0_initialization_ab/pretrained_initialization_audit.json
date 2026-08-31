@@ -1,9 +1,9 @@
 {
   "mode": "pretrained",
-  "checkpoint_path": "/home/mahsa-nasehi/Desktop/New Folder/fracture/artifacts/pretrained/yolo11s.pt",
+  "checkpoint_path": "/home/lung/lung_git/temp/SkullNet/artifacts/pretrained/yolo11s.pt",
   "checkpoint_metadata": {
     "name": "yolo11s.pt",
-    "local_path": "/home/mahsa-nasehi/Desktop/New Folder/fracture/artifacts/pretrained/yolo11s.pt",
+    "local_path": "/home/lung/lung_git/temp/SkullNet/artifacts/pretrained/yolo11s.pt",
     "source": "official_ultralytics_assets",
     "source_repository": "ultralytics/assets",
     "source_release": "v8.4.0",
@@ -11,7 +11,7 @@
     "sha256": "85a76fe86dd8afe384648546b56a7a78580c7cb7b404fc595f97969322d502d5",
     "file_size_bytes": 19313732,
     "ultralytics_version": "8.4.129",
-    "download_timestamp": "2026-08-30T14:44:15.633473+00:00"
+    "download_timestamp": "2026-08-30T22:13:41.220943+00:00"
   },
   "detection_strides": [
     4.0,

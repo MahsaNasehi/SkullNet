@@ -1,0 +1,2 @@
+fold,training_seconds,annotation_version,best_model
+0,2392.978483915329,fracture_dataset_v1_25d_p2,/home/lung/lung_git/temp/SkullNet/outputs/fold_0/v2_25d_p2_local_transfer_rerun

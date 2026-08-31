@@ -1,15 +1,11 @@
 {
   "total_studies": 338,
-  "total_patients": 320,
   "total_dicom_slices": 7683,
-  "metadata_rows": 7508,
-  "fracture_positive_studies": 28,
-  "fracture_negative_studies": 310,
-  "unknown_study_labels": 0,
-  "annotated_slices": 5176,
-  "positive_fracture_slices": 260,
-  "verified_negative_slices": 7248,
+  "positive_studies_from_boxes": 28,
+  "positive_slices": 260,
+  "explicitly_negative_slices": 7248,
   "unknown_slices": 175,
+  "annotated_slices": 5176,
   "slices_without_annotation_json": 2507,
   "total_fracture_boxes": 356,
   "box_width_min_median_max": [
@@ -37,10 +33,12 @@
   },
   "compressed_dicom_count": 3148,
   "decoding_or_annotation_errors": 0,
+  "missing_json_means_negative": false,
+  "errors": [],
+  "metadata_rows": 7508,
+  "total_patients": 320,
+  "fracture_positive_studies": 28,
+  "fracture_negative_studies": 310,
   "dicoms_without_metadata": 175,
-  "metadata_without_dicom": 0,
-  "metadata_rows_without_json": 2332,
-  "corrected_annotations_present": false,
-  "pixel_decode_audit_status": "complete: all supplied slices decoded with pydicom and local codecs",
-  "missing_json_means_negative": false
+  "metadata_without_dicom": 0
 }

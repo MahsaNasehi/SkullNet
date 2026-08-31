@@ -1,28 +1,25 @@
 # Data audit summary
 
-- **total_studies**: 338
-- **total_patients**: 320
-- **total_dicom_slices**: 7683
-- **metadata_rows**: 7508
-- **fracture_positive_studies**: 28
-- **fracture_negative_studies**: 310
-- **unknown_study_labels**: 0
-- **annotated_slices**: 5176
-- **positive_fracture_slices**: 260
-- **verified_negative_slices**: 7248
-- **unknown_slices**: 175
-- **slices_without_annotation_json**: 2507
-- **total_fracture_boxes**: 356
-- **box_width_min_median_max**: [7.0, 47.0, 421.0]
-- **box_height_min_median_max**: [10.0, 49.0, 479.0]
-- **box_area_min_median_max**: [70.0, 2200.0, 101695.0]
-- **image_size_counts**: {'512x512': 7683}
-- **transfer_syntax_counts**: {'1.2.840.10008.1.2': 2279, '1.2.840.10008.1.2.1': 2256, '1.2.840.10008.1.2.4.70': 3148}
-- **compressed_dicom_count**: 3148
-- **decoding_or_annotation_errors**: 0
-- **dicoms_without_metadata**: 175
-- **metadata_without_dicom**: 0
-- **metadata_rows_without_json**: 2332
-- **corrected_annotations_present**: False
-- **pixel_decode_audit_status**: complete: all supplied slices decoded with pydicom and local codecs
-- **missing_json_means_negative**: False
+- total_studies: 338
+- total_dicom_slices: 7683
+- positive_studies_from_boxes: 28
+- positive_slices: 260
+- explicitly_negative_slices: 7248
+- unknown_slices: 175
+- annotated_slices: 5176
+- slices_without_annotation_json: 2507
+- total_fracture_boxes: 356
+- box_width_min_median_max: [7.0, 47.0, 421.0]
+- box_height_min_median_max: [10.0, 49.0, 479.0]
+- box_area_min_median_max: [70.0, 2200.0, 101695.0]
+- image_size_counts: {'512x512': 7683}
+- transfer_syntax_counts: {'1.2.840.10008.1.2': 2279, '1.2.840.10008.1.2.1': 2256, '1.2.840.10008.1.2.4.70': 3148}
+- compressed_dicom_count: 3148
+- decoding_or_annotation_errors: 0
+- missing_json_means_negative: False
+- metadata_rows: 7508
+- total_patients: 320
+- fracture_positive_studies: 28
+- fracture_negative_studies: 310
+- dicoms_without_metadata: 175
+- metadata_without_dicom: 0

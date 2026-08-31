@@ -1,0 +1,82 @@
+data:
+  dicom_root: iaaa-contest-bct/Data/training
+  annotation_root: iaaa-contest-bct/Data/annotations
+  corrected_annotation_root: iaaa-contest-bct/Data/annotations_corrected
+  metadata_path: iaaa-contest-bct/Data/training_df.pkl
+  output_root: /dev/shm/iaaa_fracture
+  missing_json_means_negative: false
+  series_id_column: dicom_series.id
+  patient_id_column: dicom_series.PatientID
+  sop_uid_column: dicom_series.SOPInstanceUID
+  fracture_label_column: SkullFracture
+  annotation_path_column: RelativeAnnotationPath
+  annotation_version: fracture_dataset_v1_25d_p2
+split:
+  seed: 42
+  validation_fraction: 0.2
+  num_folds: 5
+  path: splits/folds.json
+preprocessing:
+  window_level: 500
+  window_width: 2500
+  image_size: 768
+  input_mode: 2.5d
+  boundary_mode: repeat
+model:
+  architecture: yolo11s_p2
+  weights: configs/yolo11s_p2.yaml
+  initialization:
+    mode: pretrained
+    pretrained_source: ultralytics_coco
+    pretrained_model: yolo11s.pt
+    pretrained_path: artifacts/pretrained/yolo11s.pt
+    download_if_missing: true
+  initial_weights_path: null
+  weight_origin: official_ultralytics_yolo11s_coco
+  external_resource_approval_reference: user_approved_official_ultralytics_coco_checkpoint
+training:
+  epochs: 120
+  batch_size: 2
+  workers: 2
+  patience: 35
+  device: 0
+  negative_downsample_ratio: 2
+  positive_oversample_factor: 2
+  adjacent_positive_oversample_factor: 1
+  hard_negative_oversample_factor: 1
+  hard_negative_csv: null
+  box: 7.5
+  cls: 0.5
+  dfl: 1.5
+  optimizer: AdamW
+  lr0: 0.0005
+  lrf: 0.05
+  cos_lr: true
+  warmup_epochs: 3.0
+  weight_decay: 0.0005
+  close_mosaic: 0
+  augmentations:
+    degrees: 3.0
+    translate: 0.03
+    scale: 0.08
+    fliplr: 0.5
+    flipud: 0.0
+    perspective: 0.0
+    mosaic: 0.0
+    mixup: 0.0
+    hsv_h: 0.0
+    hsv_s: 0.0
+    hsv_v: 0.03
+  seed: 42
+  wandb_mode: disabled
+  amp: false
+  plots: false
+inference:
+  batch_size: 2
+  fp16: true
+  detection_confidence: 0.01
+  nms_iou: 0.5
+aggregation:
+  method: max
+calibration:
+  method: none
