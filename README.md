@@ -33,7 +33,7 @@ Training has been verified with Python 3.10.12 and the following versions:
 
 ### Create the environment on a new CUDA server
 
-The following creates the known-good environment from scratch. The NVIDIA driver may be newer than CUDA 12.1; it only needs to support the CUDA 12.1 runtime bundled with PyTorch. Do not install the system CUDA toolkit merely for this project.
+The following creates the environment from scratch. Select the PyTorch wheel for the GPU architecture; the wheel bundles its CUDA runtime, so do not install the system CUDA toolkit merely for this project.
 
 ```bash
 conda create -n maskfo python=3.10.12 pip -y
@@ -41,10 +41,16 @@ conda activate maskfo
 
 python -m pip install --upgrade pip setuptools wheel
 
-# Install the CUDA-enabled PyTorch wheels first. Do not replace this with a CPU wheel.
+# RTX 30/40-series and older CUDA GPUs (for example the original RTX 3050):
 python -m pip install \
   torch==2.1.2+cu121 torchvision==0.16.2+cu121 \
   --index-url https://download.pytorch.org/whl/cu121
+
+# RTX 50-series Blackwell GPUs (for example RTX 5060 Ti, capability sm_120):
+# Use this command INSTEAD of the cu121 command above.
+python -m pip install \
+  torch==2.7.1 torchvision==0.22.1 \
+  --index-url https://download.pytorch.org/whl/cu128
 
 python -m pip install \
   numpy==1.26.4 pandas==2.2.3 pydicom==3.0.1 \
@@ -77,7 +83,13 @@ PYTHONPATH=src python -m fracture.utils.check_environment
 PYTHONPATH=src python -m pytest -q
 ```
 
-Expected PyTorch output includes `CUDA available: True` and `Torch CUDA: 12.1`. The driver-reported CUDA version in `nvidia-smi` can be newer; that is normal.
+Do not rely only on `torch.cuda.is_available()`. Verify that the wheel contains kernels for the installed GPU and execute a real CUDA operation:
+
+```bash
+python -c "import torch; print(torch.__version__, torch.version.cuda); print(torch.cuda.get_device_name(0)); print(torch.cuda.get_device_capability(0)); print(torch.cuda.get_arch_list()); x=torch.randn(2048,2048,device='cuda'); y=x@x; torch.cuda.synchronize(); print('CUDA computation passed:', y.shape)"
+```
+
+For an RTX 5060 Ti, capability must be `(12, 0)`, the compiled architectures must include `sm_120`, and the matrix multiplication must pass without a compatibility warning. The driver-reported CUDA version in `nvidia-smi` can be newer than the wheel runtime; that is normal.
 
 ## Dataset preparation
 

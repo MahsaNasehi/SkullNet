@@ -264,10 +264,42 @@ def main() -> None:
     initialization_report["config_path"] = str(Path(args.config).resolve())
     initialization_report["config_sha256"] = sha256_file(args.config)
     initialization_report["dataset"] = _dataset_provenance(cfg, args.dataset_yaml)
-    (output / f"{args.run_name}_initialization.json").write_text(
+    initialization_report_path = output / f"{args.run_name}_initialization.json"
+    initialization_report_path.write_text(
         json.dumps(initialization_report, indent=2) + "\n",
         encoding="utf-8",
     )
+
+    # Ultralytics treats pretrained=False as an instruction to rebuild a model
+    # created from YAML without the weights already loaded by verify_transfer().
+    # Guard one known transferred tensor at the last callback before training so
+    # an API behavior change cannot silently turn an initialization experiment
+    # into seeded random initialization again.
+    has_transferred_initialization = bool(plan and plan.checkpoint_path)
+    if has_transferred_initialization:
+        backbone_key = str(initialization_report["transfer"]["backbone_tensor_key"])
+        expected_backbone = model.model.state_dict()[backbone_key].detach().cpu().clone()
+
+        def verify_training_initialization(trainer: object) -> None:
+            live_state = trainer.model.state_dict()
+            live_backbone = live_state.get(backbone_key)
+            if live_backbone is None or not torch.equal(expected_backbone, live_backbone.detach().cpu()):
+                raise RuntimeError(
+                    "Transferred initialization was not preserved by the Ultralytics trainer; "
+                    "aborting before the first training epoch"
+                )
+            initialization_report["training_initialization_verified"] = True
+            initialization_report_path.write_text(
+                json.dumps(initialization_report, indent=2) + "\n",
+                encoding="utf-8",
+            )
+
+        initialization_report["training_initialization_verified"] = False
+        initialization_report_path.write_text(
+            json.dumps(initialization_report, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        model.add_callback("on_pretrain_routine_end", verify_training_initialization)
     train = cfg["training"]
     augmentations = train.get("augmentations", {})
     if resume_checkpoint:
@@ -287,7 +319,9 @@ def main() -> None:
             "project": str(output),
             "name": args.run_name,
             "exist_ok": False,
-            "pretrained": False,
+            # True here means "preserve the already-loaded in-memory model" in
+            # Ultralytics Model.train(); it does not download another checkpoint.
+            "pretrained": has_transferred_initialization,
             "amp": bool(train.get("amp", False)),
             "plots": bool(train.get("plots", False)),
             "cache": False,
