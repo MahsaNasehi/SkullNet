@@ -1,6 +1,6 @@
 {
   "name": "yolo11s.pt",
-  "local_path": "/home/lung/lung_git/temp/SkullNet/artifacts/pretrained/yolo11s.pt",
+  "local_path": "/home/mahsa-nasehi/Desktop/IAAA/fracture/artifacts/pretrained/yolo11s.pt",
   "source": "official_ultralytics_assets",
   "source_repository": "ultralytics/assets",
   "source_release": "v8.4.0",

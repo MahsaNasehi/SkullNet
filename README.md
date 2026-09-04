@@ -2,6 +2,224 @@
 
 This package implements the offline core path `study_dir -> DICOM/HU window -> detector + optional study MIL -> OOF-selected aggregation/calibration -> float fracture_prob`. It never downloads weights or installs dependencies at prediction time. Corrected annotations override originals without modifying organizer files; missing JSON is unknown by default.
 
+## Training — start here
+
+This is the short operational path for the current experiment. Run every command
+from the repository root. The current experiment uses 2.5D CT input, a custom
+YOLO11s P2 detector, and the selected bone window **WL=800, WW=1600**.
+
+### 1. Activate the environment and verify the repository
+
+```bash
+cd /absolute/path/to/fracture
+conda activate maskfo
+
+PYTHONPATH=src python -m pytest -q
+test -d iaaa-contest-bct/Data/training
+test -d iaaa-contest-bct/Data/annotations
+test -f iaaa-contest-bct/Data/training_df.pkl
+test -s artifacts/pretrained/yolo11s.pt
+df -h /dev/shm
+```
+
+Replace `/absolute/path/to/fracture` with the actual clone location. For example,
+the local workstation path is currently:
+
+```bash
+cd "/home/mahsa-nasehi/Desktop/IAAA/fracture"
+```
+
+### 2. Prepare the HU dataset
+
+The rendered training data lives in `/dev/shm` and disappears after a reboot.
+Generate it only when `fold_0.yaml` is absent:
+
+```bash
+if [ ! -f /dev/shm/iaaa_fracture/fracture_dataset_v2_hu800_ww1600_original/fold_0.yaml ]; then
+  PYTHONPATH=src python -m fracture.data.prepare_yolo \
+    --config configs/fracture_25d_p2_hu800_original.yaml
+fi
+```
+
+The generator never overwrites an existing directory. If the command reports
+`Dataset version already exists` while `fold_0.yaml` is missing, the existing
+directory is incomplete. Preserve it under another name and regenerate:
+
+```bash
+mv \
+  /dev/shm/iaaa_fracture/fracture_dataset_v2_hu800_ww1600_original \
+  /dev/shm/iaaa_fracture/fracture_dataset_v2_hu800_ww1600_original.incomplete
+
+PYTHONPATH=src python -m fracture.data.prepare_yolo \
+  --config configs/fracture_25d_p2_hu800_original.yaml
+```
+
+If the `.incomplete` name already exists, use `.incomplete_2` or another unique
+name. Confirm successful preparation before training:
+
+```bash
+test -f /dev/shm/iaaa_fracture/fracture_dataset_v2_hu800_ww1600_original/fold_0.yaml
+cat /dev/shm/iaaa_fracture/fracture_dataset_v2_hu800_ww1600_original/fold_stats.csv
+```
+
+### 3. Start the current Fold-0 training in tmux
+
+Do not start the same run twice. First check that neither a training process nor
+the tmux session is already active:
+
+```bash
+pgrep -af "fracture.training.train_detector"
+tmux list-sessions 2>/dev/null || true
+```
+
+Then launch the run. Capturing the active environment's Python path makes the
+tmux job independent of shell activation after detaching:
+
+```bash
+mkdir -p logs
+MASKFO_PYTHON="$(command -v python)"
+
+tmux new-session -d -s fracture_hu800 -c "$PWD" \
+  "env PYTHON='$MASKFO_PYTHON' ./scripts/run_improved_pipeline.sh train-original-fold0 \
+  2>&1 | tee logs/train-original-fold0.log"
+```
+
+Monitor it with either command:
+
+```bash
+tmux attach -t fracture_hu800
+```
+
+```bash
+tail -f logs/train-original-fold0.log
+```
+
+Detach from tmux without stopping training with `Ctrl+B`, then `D`. The run is
+written to:
+
+```text
+outputs/fold_0/v5_hu800_ww1600_original/
+reports/fold0_v5_hu800_ww1600_original.csv
+reports/fold0_v5_hu800_ww1600_original_slices.csv
+reports/fold0_v5_hu800_ww1600_original_metrics.json
+```
+
+### 4. Check Fold 0 after it finishes
+
+```bash
+test -s outputs/fold_0/v5_hu800_ww1600_original/weights/best.pt
+cat reports/fold0_v5_hu800_ww1600_original_metrics.json
+
+python - <<'PY'
+import pandas as pd
+
+path = "outputs/fold_0/v5_hu800_ww1600_original/results.csv"
+df = pd.read_csv(path)
+best = df.loc[df["metrics/mAP50-95(B)"].idxmax()]
+print(best[[
+    "epoch",
+    "metrics/precision(B)",
+    "metrics/recall(B)",
+    "metrics/mAP50(B)",
+    "metrics/mAP50-95(B)",
+]])
+PY
+```
+
+Keep `best.pt`, `results.csv`, and all generated reports together. A zero-byte
+checkpoint is corrupted and must never be used.
+
+## What to run after Fold 0
+
+Do not jump directly to final training. Use the following order so all model
+selection remains out-of-fold (OOF) and patient-separated.
+
+### Phase A — complete the original-label OOF baseline
+
+If Fold 0 completed successfully, this command reuses it and trains folds 1–4:
+
+```bash
+./scripts/run_improved_pipeline.sh train-original-oof
+```
+
+For a long unattended run, launch it in a new tmux session:
+
+```bash
+MASKFO_PYTHON="$(command -v python)"
+tmux new-session -d -s fracture_oof -c "$PWD" \
+  "env PYTHON='$MASKFO_PYTHON' ./scripts/run_improved_pipeline.sh train-original-oof \
+  2>&1 | tee logs/train-original-oof.log"
+```
+
+### Phase B — review label disagreements
+
+Create the review queue from held-out predictions:
+
+```bash
+./scripts/run_improved_pipeline.sh review-original-oof
+```
+
+Review `reports/reannotation_candidates.csv` manually and record decisions in
+`reports/reannotation_log.csv`. Predictions are suggestions only; the pipeline
+does not silently modify organizer labels. Then validate the corrections:
+
+```bash
+./scripts/run_improved_pipeline.sh audit-corrections
+```
+
+### Phase C — train with reviewed/corrected labels
+
+```bash
+./scripts/run_improved_pipeline.sh prepare-base
+./scripts/run_improved_pipeline.sh train-base-oof
+```
+
+### Phase D — hard-negative mining and retraining
+
+```bash
+./scripts/run_improved_pipeline.sh mine-hard-negatives
+./scripts/run_improved_pipeline.sh prepare-hnm
+./scripts/run_improved_pipeline.sh train-hnm-oof
+```
+
+### Phase E — study-level model and OOF fusion
+
+The detector localizes suspicious slices; the MIL branch and calibrated fusion
+produce the final study-level fracture probability required by the challenge.
+
+```bash
+./scripts/run_improved_pipeline.sh train-mil-oof
+./scripts/run_improved_pipeline.sh fuse-oof
+```
+
+### Phase F — final all-data models and deployment package
+
+Choose the epoch counts from the five OOF best-epoch histories, not from metrics
+on the complete training set:
+
+```bash
+export FINAL_DETECTOR_EPOCHS=<selected_detector_epochs>
+./scripts/run_improved_pipeline.sh train-final-detector
+
+export FINAL_MIL_EPOCHS=<selected_mil_epochs>
+./scripts/run_improved_pipeline.sh train-final-mil
+```
+
+Finally, provide the selected non-empty artifacts and create the deployment
+manifest:
+
+```bash
+export FINAL_DETECTOR=outputs/fold_-1/final_hu800_hnm/weights/best.pt
+export FINAL_STUDY_MODEL=outputs/final/final_study_mil_hu800/weights/best.pt
+export FINAL_CALIBRATOR=models/final_hybrid/calibrator.joblib
+
+./scripts/run_improved_pipeline.sh make-deployment
+```
+
+The detailed environment notes, historical experiments, and recovery commands
+below are reference material. For a normal new training run, follow the steps in
+**Training — start here** first.
+
 ## Dataset status
 
 The supplied dataset is mounted in `iaaa-contest-bct/Data`. It contains 338 studies from 320 patients, 7,683 DICOM files, and 5,176 organizer annotation JSONs. Metadata is stored in `training_df.pkl`; its configured fracture columns agree with all existing `boxes_xywh` labels. See `reports/data_summary.json` for the complete audit.
