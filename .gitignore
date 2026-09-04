@@ -14,3 +14,12 @@
 # Official development-time pretrained cache. Keep provenance metadata in git,
 # but never commit the binary checkpoint; final inference uses trained best.pt.
 /artifacts/pretrained/*.pt
+
+# Generated training/runtime files. Existing tracked historical outputs are not
+# removed by these rules, but new checkpoints and caches stay out of commits.
+__pycache__/
+*.py[cod]
+.pytest_cache/
+/outputs/
+/models/deployment.yaml
+/visualizations/reannotation/**/*.png

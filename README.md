@@ -1,14 +1,35 @@
 # IAAA 2026 skull-fracture workstream
 
-This package implements the offline core path `study_dir -> DICOM/HU/bone window -> YOLO -> study aggregation -> calibration -> float fracture_prob`. It never downloads weights or installs dependencies at prediction time. Corrected annotations override originals without modifying organizer files; missing JSON is unknown by default.
+This package implements the offline core path `study_dir -> DICOM/HU window -> detector + optional study MIL -> OOF-selected aggregation/calibration -> float fracture_prob`. It never downloads weights or installs dependencies at prediction time. Corrected annotations override originals without modifying organizer files; missing JSON is unknown by default.
 
 ## Dataset status
 
 The supplied dataset is mounted in `iaaa-contest-bct/Data`. It contains 338 studies from 320 patients, 7,683 DICOM files, and 5,176 organizer annotation JSONs. Metadata is stored in `training_df.pkl`; its configured fracture columns agree with all existing `boxes_xywh` labels. See `reports/data_summary.json` for the complete audit.
 
+The study target is strongly imbalanced: 28/338 studies are fracture-positive (`8.28%`) and 310/338 are negative (`91.72%`). There are 260 positive slices and 356 boxes. Splits are patient-grouped; sampling/oversampling is applied only to each training partition, while every held-out study and all of its slices remain in validation.
+
 A full pixel-decode audit passed for all DICOM files, including 3,148 JPEG Lossless instances. Patient-grouped folds are frozen in `splits/folds.json`. The rendered YOLO dataset is deliberately stored in `/dev/shm/iaaa_fracture` because the main filesystem has limited free space. `/dev/shm` is volatile, so regenerate the rendered dataset after a reboot; the source DICOMs remain authoritative.
 
-## `maskfo` environment and required packages
+## Official environment versus the historical `maskfo` server
+
+The final evaluator contract is Python `>=3.12,<3.13`, PyTorch `>=2.10,<3`, NumPy `>=2,<2.3`, and Ultralytics `>=8.3.240,<9`. `pyproject.toml` now expresses that contract. The existing RTX 5060 Ti server (`Python 3.10.12`, `torch 2.7.1+cu128`) is still useful for reproducing the historical runs, but passing its tests does not replace the required final Python 3.12 acceptance run.
+
+Create a clean final-compatibility environment with:
+
+```bash
+conda create -n skullnet312 python=3.12 pip -y
+conda activate skullnet312
+python -m pip install --upgrade pip setuptools wheel
+
+# Install a torch >=2.10 wheel that supports the server GPU/CUDA policy, then:
+python -m pip install -e '.[dev]'
+PYTHONPATH=src python -m fracture.utils.check_environment
+PYTHONPATH=src python -m pytest -q
+```
+
+The environment checker is read-only: it reports versions/CUDA and never installs or downloads anything. Final inference is forced offline and loads only local artifacts.
+
+## Historical `maskfo` environment and required packages
 
 Training has been verified with Python 3.10.12 and the following versions:
 
@@ -60,11 +81,11 @@ python -m pip install \
   PyYAML==6.0.3 pytest==8.4.2
 ```
 
-After cloning or copying the repository, install only the local package metadata; `--no-deps` prevents pip from replacing the pinned CUDA stack:
+Because project metadata now intentionally enforces the official Python 3.12 contract, do not install this package into the historical Python 3.10 environment. Run it from the repository with `PYTHONPATH=src`:
 
 ```bash
 cd /absolute/path/to/fracture
-python -m pip install --no-deps -e .
+PYTHONPATH=src python -m pytest -q
 ```
 
 Install `tmux` once at the operating-system level:
@@ -79,9 +100,10 @@ Verify the driver, CUDA-enabled wheel, package imports, and tests from the repos
 cd /absolute/path/to/fracture
 nvidia-smi
 python -c "import torch; print('CUDA available:', torch.cuda.is_available()); print('GPU:', torch.cuda.get_device_name(0)); print('Torch CUDA:', torch.version.cuda)"
-PYTHONPATH=src python -m fracture.utils.check_environment
 PYTHONPATH=src python -m pytest -q
 ```
+
+`fracture.utils.check_environment` intentionally fails under this legacy environment; run that acceptance check in `skullnet312` instead.
 
 Do not rely only on `torch.cuda.is_available()`. Verify that the wheel contains kernels for the installed GPU and execute a real CUDA operation:
 
@@ -387,6 +409,91 @@ Do not resume into `outputs/fold_0/v1_25d_p2/`, because Ultralytics would modify
 
 ## Improvement checklist
 
+### First controlled improvement: 1024-pixel input
+
+The first follow-up experiment increases only the Ultralytics train/validation
+resolution from 768 to 1024 pixels. It retains the corrected COCO initialization,
+YOLO11s P2–P5 architecture, 2.5D channels, Fold-0 split, sampled examples, batch
+size, optimizer, augmentations, seed, and early-stopping settings. The existing
+lossless rendered dataset is reused because its PNGs are stored at their original
+resolution; `imgsz` is applied by Ultralytics when loading them.
+
+After pulling this code on the remote server, verify the prerequisites:
+
+```bash
+cd /home/lung/lung_git/temp/SkullNet
+conda activate maskfo
+
+test -s artifacts/pretrained/yolo11s.pt
+test -f /dev/shm/iaaa_fracture/fracture_dataset_v1_25d_p2/fold_0.yaml
+test ! -e outputs/fold_0/v4_25d_p2_coco_pretrained_1024
+```
+
+If `/dev/shm` was cleared by a reboot, recreate the same immutable dataset first:
+
+```bash
+PYTHONPATH=src python -m fracture.data.prepare_yolo \
+  --config configs/fracture_25d_p2_pretrained.yaml
+```
+
+Start the experiment in a persistent tmux session:
+
+```bash
+tmux new-session -d -s fracture_1024 -c "$PWD" \
+  "exec env YOLO_CONFIG_DIR=/tmp/ultralytics-maskfo PYTHONPATH=src YOLO_OFFLINE=1 \
+  conda run --no-capture-output -n maskfo python \
+  -m fracture.training.train_detector \
+  --config configs/fracture_25d_p2_pretrained_1024.yaml \
+  --fold 0 \
+  --dataset-yaml /dev/shm/iaaa_fracture/fracture_dataset_v1_25d_p2/fold_0.yaml \
+  --epochs 60 \
+  --run-name v4_25d_p2_coco_pretrained_1024"
+
+tmux set-option -t fracture_1024 remain-on-exit on
+tmux attach -t fracture_1024
+```
+
+Detach with `Ctrl+B`, then `D`. Monitor without attaching using:
+
+```bash
+tmux capture-pane -p -t fracture_1024 -S -80
+tail -f outputs/fold_0/v4_25d_p2_coco_pretrained_1024/results.csv
+watch -n 2 nvidia-smi
+```
+
+The expected startup evidence is `Image sizes 1024 train, 1024 val`, detection
+strides `[4, 8, 16, 32]`, `Transferred 593/593 items from pretrained weights`, and
+`"training_initialization_verified": true` in:
+
+```text
+outputs/fold_0/v4_25d_p2_coco_pretrained_1024_initialization.json
+```
+
+Compare its best row against the corrected 768-pixel run without selecting on a
+single final epoch:
+
+```bash
+python - <<'PY'
+import pandas as pd
+
+runs = {
+    "768": "outputs/fold_0/v3_25d_p2_coco_pretrained_fixed/results.csv",
+    "1024": "outputs/fold_0/v4_25d_p2_coco_pretrained_1024/results.csv",
+}
+for resolution, path in runs.items():
+    df = pd.read_csv(path)
+    best = df.loc[df["metrics/mAP50-95(B)"].idxmax()]
+    print(resolution, best[[
+        "epoch", "metrics/precision(B)", "metrics/recall(B)",
+        "metrics/mAP50(B)", "metrics/mAP50-95(B)",
+    ]].to_dict())
+PY
+```
+
+The 1024 model should advance only if study-level evaluation also improves; the
+six positive Fold-0 studies make detector metrics alone too unstable for a final
+decision.
+
 - [x] Add explicit, mutually exclusive random/local-transfer/official-COCO initialization modes with cached checkpoint provenance.
 - [ ] Train all five patient-grouped folds and report mean and per-fold detection and study-level metrics.
 - [ ] Generate strictly out-of-fold slice and study predictions for model selection, aggregation, calibration, and error analysis.
@@ -403,6 +510,125 @@ Do not resume into `outputs/fold_0/v1_25d_p2/`, because Ultralytics would modify
 - [ ] Benchmark inference across positive, negative, large, and compressed-DICOM studies under the final evaluator-style environment.
 - [ ] Package only the selected local weights, aggregator, calibrator, configuration, and inference code; rerun the offline evaluator acceptance test.
 
+## HU-window decision and implemented end-to-end pipeline
+
+### Train-only HU analysis
+
+The screenshot settings were registered and measured on the training side of Fold 0 only: 270 studies, 204 positive slices, 276 boxes, 356,019 bone-region pixels (`HU >= 150`). Boxes are region labels rather than fracture masks, so this selects a defensible starting point—not a guaranteed optimum. Full numeric output is in `reports/hu_window_analysis_fold0_train.json`.
+
+| Level / width | HU interval | Bone pixels clipped low/high | Within-bone dynamic std | Interpretation |
+| --- | --- | ---: | ---: | --- |
+| 500 / 2500 (old) | -750…1750 | 0.00% / 0.21% | 0.139 | Preserves range but compresses cortical contrast |
+| 925 / 2050 | -100…1950 | 0.00% / 0.09% | 0.170 | Safe broad window from the screenshots |
+| 1125 / 450 | 900…1350 | 76.51% / 3.78% | 0.262 | Too narrow; most bone collapses to black/white |
+| 550 / 1350 | -125…1225 | 0.00% / 6.77% | 0.238 | Better contrast but clips dense cortex |
+| 700 / 850 | 275…1125 | 16.44% / 10.28% | 0.345 | Visually sharp but severe two-sided clipping |
+| **800 / 1600 (selected)** | **0…1600** | **0.00% / 0.71%** | **0.216** | Stronger contrast with little high-HU clipping |
+
+The new baseline therefore uses fixed `WL=800`, `WW=1600` for validation/inference. Training duplicates receive deterministic, train-only jitter of `level ±150` and `width ±20%` (minimum width 1000). A common window is applied to all three 2.5D channels, and neighbours are selected near `z±5 mm` when physical positions are available. The narrow `1125/450` setting and pseudocolor are not primary inputs: the former destroys most within-cortex intensity ordering, while a colormap would consume the three RGB channels currently carrying z-context. They can be evaluated later only as controlled OOF ablations.
+
+### Implemented phases
+
+The code now supports the final task directly (`whole CT study -> fracture_prob`), so bounding boxes are not required at inference. The detector branch supplies localization evidence, a compact study-MIL branch learns directly from complete-study labels, and the final OOF logistic model decides whether fusion actually helps. The new manifest preserves all 7,683 slices for the study branch, but marks the 175 unknown slices as ineligible for detector targets and masks them out of the auxiliary slice loss. No study is scored by a detector, MIL model, or calibrator that was fitted on that study during model selection.
+
+Run one phase at a time. Long GPU phases should be placed in `tmux`; on a single GPU do not launch detector jobs in parallel.
+
+```bash
+cd /home/lung/lung_git/temp/SkullNet
+conda activate maskfo
+chmod +x scripts/run_improved_pipeline.sh
+
+# Phase 0: read-only data/HU checks
+./scripts/run_improved_pipeline.sh audit
+./scripts/run_improved_pipeline.sh analyse-hu
+
+# Phase 1: immutable HU800 dataset using organizer boxes only
+./scripts/run_improved_pipeline.sh prepare-original
+
+# Immediate decision gate: run Fold 0 first and compare study-level PR-AUC/AUROC
+./scripts/run_improved_pipeline.sh train-original-fold0
+
+# Continue only if the fixed Fold-0 comparison justifies the HU change
+./scripts/run_improved_pipeline.sh train-original-oof
+
+# Phase 2: OOF disagreements -> human review queue and PNGs
+./scripts/run_improved_pipeline.sh review-original-oof
+# Human reviews candidates, writes accepted JSONs under
+# iaaa-contest-bct/Data/annotations_corrected/<series>/<sop>.json,
+# and records every decision in reports/reannotation_log.csv.
+./scripts/run_improved_pipeline.sh audit-corrections
+
+# Phase 3: same folds/model/HU settings with accepted corrections
+./scripts/run_improved_pipeline.sh prepare-base
+./scripts/run_improved_pipeline.sh train-base-oof
+
+# Phase 4: only verified-negative OOF false positives become hard negatives
+./scripts/run_improved_pipeline.sh mine-hard-negatives
+./scripts/run_improved_pipeline.sh prepare-hnm
+./scripts/run_improved_pipeline.sh train-hnm-oof
+
+# Phase 5: independent low-memory whole-study MIL branch
+./scripts/run_improved_pipeline.sh train-mil-oof
+
+# Phase 6: complete five-fold OOF selection, fusion, and cross-fit calibration
+./scripts/run_improved_pipeline.sh fuse-oof
+
+# Phase 7: only after choosing epoch counts from OOF histories, refit on all data
+FINAL_DETECTOR_EPOCHS=NN ./scripts/run_improved_pipeline.sh train-final-detector
+FINAL_MIL_EPOCHS=NN ./scripts/run_improved_pipeline.sh train-final-mil
+```
+
+For example, start the first long five-fold phase in a persistent tmux pane:
+
+```bash
+mkdir -p logs
+tmux new-session -d -s fracture_hu_oof -c "$PWD" \
+  "conda run --no-capture-output -n maskfo \
+  ./scripts/run_improved_pipeline.sh train-original-fold0 \
+  2>&1 | tee logs/train-original-fold0.log"
+tmux set-option -t fracture_hu_oof remain-on-exit on
+tmux attach -t fracture_hu_oof
+```
+
+Detach with `Ctrl+B`, then `D`; inspect later with `tmux capture-pane -p -t fracture_hu_oof -S -100` or `tail -f logs/train-original-fold0.log`. A session that displays `[exited]` has finished or failed; `remain-on-exit` preserves its final pane so the error is not lost. Compare `reports/fold0_v5_hu800_ww1600_original_metrics.json` with `reports/v3_coco_pretrained_eval_metrics.json` before spending GPU time on folds 1–4; visual contrast alone is not an acceptance criterion.
+
+`train-original-oof`, `train-base-oof`, and `train-hnm-oof` each train folds 0–4 sequentially and write per-study and per-slice OOF CSVs. `generate_oof` refuses incomplete folds by default; `--allow-incomplete-oof` creates diagnostics but deliberately does not write deployable models. Aggregator selection prioritizes PR-AUC and sensitivity rather than the misleadingly high class-imbalanced QWK. Calibration metrics are cross-fitted, while the final saved calibrator is fitted only after all OOF decisions are complete.
+
+After inspecting `reports/final_oof/final_metrics.json`, explicitly select non-empty artifacts and create the no-argument evaluator manifest:
+
+```bash
+FINAL_DETECTOR=outputs/fold_-1/final_hu800_hnm/weights/last.pt \
+FINAL_STUDY_MODEL=outputs/final/final_study_mil_hu800/weights/best.pt \
+FINAL_CALIBRATOR=models/final_hybrid/calibrator.joblib \
+./scripts/run_improved_pipeline.sh make-deployment
+
+YOLO_OFFLINE=1 PYTHONPATH=src python scripts/acceptance_smoke.py \
+  --weights "$FINAL_DETECTOR" \
+  --study-model "$FINAL_STUDY_MODEL" \
+  --aggregator models/final_hybrid/aggregator.joblib \
+  --calibrator models/final_hybrid/calibrator.joblib \
+  --study-dir iaaa-contest-bct/Data/training/2265 \
+  --input-mode 2.5d --image-size 768 \
+  --window-level 800 --window-width 1600 --context-distance-mm 5 \
+  --device 0
+```
+
+The final detector and MIL commands refit the OOF-selected configurations on all 338 studies for fixed epoch counts; their validation output is in-sample and must not be quoted as performance. Use the detector's `last.pt` for this fixed-epoch refit—not the in-sample-selected `best.pt`. A deployable choice must be justified by complete five-fold OOF results. An ensemble can be added only after its calibration is evaluated under the same leakage-safe protocol.
+
+### What was fixed
+
+- [x] Rejected zero-byte/truncated detector, resume, and study-model checkpoints before loading.
+- [x] Fixed optional aggregator/calibrator handling in the acceptance smoke test.
+- [x] Made HU preprocessing identical across dataset generation, held-out evaluation, CLI submission, benchmark, and final predictor.
+- [x] Added physical-distance 2.5D context for irregular 5/8 mm slice spacing.
+- [x] Restricted window jitter to training duplicates and rendered variants only for repeat-eligible slices, limiting `/dev/shm` growth.
+- [x] Made hard-negative mining OOF-only and restricted it to metadata-verified negative slices; unknown slices cannot silently become negatives.
+- [x] Added OOF review queues/visualizations and mandatory accepted-decision provenance for corrected annotations.
+- [x] Added compact whole-study MIL training, detector+MIL fusion, physical run-length features, cross-fitted calibration, and incomplete-OOF safeguards.
+- [x] Added a local deployment manifest so the official no-argument `Model()` adapter can load preprocessing and artifacts without network/runtime installation.
+
+No new accuracy number is claimed until the new five-fold runs finish. The existing best corrected-COCO Fold-0 detector remains weak (`mAP50≈0.068`, `mAP50-95≈0.038`); the purpose of these changes is to run a controlled, leakage-safe experiment rather than infer improvement from visual contrast alone.
+
 ## Inference API
 
 ```python
@@ -412,10 +638,14 @@ predictor = FracturePredictor(
     "models/best.pt",
     aggregator_path="models/aggregator.joblib",  # omit for max
     calibrator_path="models/calibrator.joblib",  # omit for none
+    study_model_path="models/study_mil.pt",       # optional hybrid branch
     aggregation_method="logistic",
     calibration_method="platt",
     input_mode="2.5d",
     image_size=768,
+    window_level=800,
+    window_width=1600,
+    context_distance_mm=5,
 )
 fracture_prob = predictor.predict(study_dir)
 ```

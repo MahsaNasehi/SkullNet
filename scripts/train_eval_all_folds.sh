@@ -6,7 +6,7 @@ cd "$ROOT"
 CONFIG="${1:-configs/fracture_25d_p2.yaml}"
 RUN_NAME="${2:-v1_25d_p2}"
 DATASET_ROOT="${DATASET_ROOT:-/dev/shm/iaaa_fracture/fracture_dataset_v1_25d_p2}"
-PYTHON="${PYTHON:-/home/mahsa-nasehi/miniconda3/envs/maskfo/bin/python}"
+PYTHON="${PYTHON:-python}"
 export PYTHONPATH=src
 export YOLO_OFFLINE=1
 export YOLO_CONFIG_DIR=/tmp/ultralytics-maskfo
@@ -20,7 +20,11 @@ fi
 FOLD_CSVS=()
 for fold in 0 1 2 3 4; do
   weights="outputs/fold_${fold}/${RUN_NAME}/weights/best.pt"
-  if [[ ! -f "${weights}" ]]; then
+  if [[ ! -s "${weights}" ]] || (( $(stat -c %s "${weights}" 2>/dev/null || echo 0) < 100000 )); then
+    if [[ -e "${weights}" ]]; then
+      echo "Invalid empty checkpoint found; refusing to skip fold ${fold}: ${weights}" >&2
+      exit 1
+    fi
     echo "=== Training fold ${fold} ==="
     "${PYTHON}" -m fracture.training.train_detector \
       --config "${CONFIG}" \
@@ -32,12 +36,19 @@ for fold in 0 1 2 3 4; do
   fi
   echo "=== Predicting fold ${fold} ==="
   name="fold${fold}_${RUN_NAME}"
-  "${PYTHON}" -m fracture.evaluation.predict_fold \
-    --config "${CONFIG}" \
-    --fold "${fold}" \
-    --weights "outputs/fold_${fold}/${RUN_NAME}/weights/best.pt" \
-    --output-dir reports \
-    --name "${name}"
+  if [[ -s "reports/${name}.csv" && -s "reports/${name}_slices.csv" && -s "reports/${name}_metrics.json" ]]; then
+    echo "=== Skipping prediction fold ${fold}; immutable reports exist ==="
+  elif [[ -e "reports/${name}.csv" || -e "reports/${name}_slices.csv" || -e "reports/${name}_metrics.json" ]]; then
+    echo "Partial/empty report set exists; choose a new RUN_NAME" >&2
+    exit 1
+  else
+    "${PYTHON}" -m fracture.evaluation.predict_fold \
+      --config "${CONFIG}" \
+      --fold "${fold}" \
+      --weights "outputs/fold_${fold}/${RUN_NAME}/weights/best.pt" \
+      --output-dir reports \
+      --name "${name}"
+  fi
   FOLD_CSVS+=(--fold-csv "reports/${name}.csv")
 done
 
@@ -45,8 +56,8 @@ echo "=== Fitting OOF aggregator + calibrator ==="
 "${PYTHON}" -m fracture.evaluation.generate_oof \
   "${FOLD_CSVS[@]}" \
   --config "${CONFIG}" \
-  --output-dir reports \
-  --models-dir models \
+  --output-dir "reports/${RUN_NAME}_oof" \
+  --models-dir "models/${RUN_NAME}" \
   --calibration platt
 
-echo "Done. See reports/final_metrics.json and models/*.joblib"
+echo "Done. See reports/${RUN_NAME}_oof/final_metrics.json and models/${RUN_NAME}/*.joblib"

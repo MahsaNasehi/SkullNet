@@ -11,12 +11,13 @@ import numpy as np
 
 from fracture.data.annotations import resolve_annotation
 from fracture.data.dicom import load_study
-from fracture.data.metadata import load_metadata
+from fracture.data.metadata import load_metadata, slice_label_index
 from fracture.evaluation.series_metrics import evaluate
 from fracture.inference.aggregation import aggregation_features
 from fracture.inference.slice_predictor import predict_slices
 from fracture.models.detector import Detector
 from fracture.utils.config import load_config, require_path
+from fracture.utils.pretrained import sha256_file
 
 
 def _best_f1_threshold(y_true: list[int], probability: list[float]) -> tuple[float, dict[str, float]]:
@@ -45,6 +46,8 @@ def main() -> None:
     args = parser.parse_args()
 
     cfg = load_config(args.config)
+    checkpoint_sha256 = sha256_file(args.weights)
+    config_sha256 = sha256_file(args.config)
     split_path = Path(cfg["split"].get("path", "splits/folds.json"))
     folds = json.loads(split_path.read_text(encoding="utf-8"))["folds"]
     selected = next((item for item in folds if int(item["fold"]) == args.fold), None)
@@ -64,6 +67,7 @@ def main() -> None:
         str(series): str(group[patient_col].iloc[0])
         for series, group in metadata.groupby(series_col)
     }
+    metadata_slice_labels = slice_label_index(data)
 
     inference = cfg["inference"]
     try:
@@ -104,18 +108,36 @@ def main() -> None:
             window_level=float(prep["window_level"]),
             window_width=float(prep["window_width"]),
             batch_size=int(inference["batch_size"]),
+            boundary_mode=str(prep.get("boundary_mode", "repeat")),
+            context_distance_mm=(
+                float(prep["context_distance_mm"])
+                if prep.get("context_distance_mm") is not None
+                else None
+            ),
         )
         scores = [item.max_confidence for item in predictions]
         counts = [item.num_detections for item in predictions]
-        features = aggregation_features(scores, counts, thresholds=(0.05, 0.1, 0.3, 0.5))
+        features = aggregation_features(
+            scores,
+            counts,
+            [item.physical_position for item in predictions],
+            thresholds=(0.05, 0.1, 0.3, 0.5),
+        )
         study_seconds = time.perf_counter() - study_started
         rows.append({
             "series_id": series_id,
             "patient_id": patient_ids[series_id],
             "y_true": study_labels[series_id],
             "fold": args.fold,
+            "prediction_protocol": "heldout_patient_fold",
+            "detector_checkpoint_sha256": checkpoint_sha256,
+            "config_sha256": config_sha256,
             "slice_scores": ";".join(f"{value:.8g}" for value in scores),
             "detection_counts": ";".join(map(str, counts)),
+            "physical_positions": ";".join(
+                "" if item.physical_position is None else f"{item.physical_position:.8g}"
+                for item in predictions
+            ),
             "num_slices": len(records),
             "study_seconds": study_seconds,
             **features,
@@ -132,15 +154,36 @@ def main() -> None:
                 [box.x, box.y, box.x + box.width, box.y + box.height]
                 for box in (annotation.boxes if annotation else ())
             ]
+            gt_areas = [
+                float(box.width * box.height)
+                for box in (annotation.boxes if annotation else ())
+            ]
+            metadata_slice_label = metadata_slice_labels.get((series_id, record.sop_uid))
+            slice_status = (
+                "positive"
+                if gt_boxes
+                else "negative"
+                if metadata_slice_label is False
+                else "unknown"
+            )
             slice_rows.append({
                 "series_id": series_id,
                 "patient_id": patient_ids[series_id],
                 "sop_uid": record.sop_uid,
+                "dicom_path": str(record.path),
                 "slice_index": prediction.slice_index,
                 "physical_position": prediction.physical_position,
                 "image_height": record.shape[0],
                 "image_width": record.shape[1],
                 "study_y_true": study_labels[series_id],
+                "fold": args.fold,
+                "prediction_protocol": "heldout_patient_fold",
+                "detector_checkpoint_sha256": checkpoint_sha256,
+                "config_sha256": config_sha256,
+                "slice_status": slice_status,
+                "gt_num_boxes": len(gt_boxes),
+                "min_box_area": min(gt_areas, default=0.0),
+                "max_box_area": max(gt_areas, default=0.0),
                 "gt_boxes": json.dumps(gt_boxes),
                 "boxes": json.dumps(prediction.boxes),
                 "scores": json.dumps(prediction.scores),
@@ -155,6 +198,8 @@ def main() -> None:
     study_times = np.asarray([float(row["study_seconds"]) for row in rows], dtype=float)
     metrics.update({
         "fold": args.fold,
+        "detector_checkpoint_sha256": checkpoint_sha256,
+        "config_sha256": config_sha256,
         "num_studies": len(rows),
         "num_positive_studies": int(sum(y_true)),
         "elapsed_seconds": time.perf_counter() - started,
@@ -175,6 +220,17 @@ def main() -> None:
         metrics["peak_vram_bytes"] = 0
 
     output = Path(args.output_dir)
+    targets = [
+        output / f"{args.name}.csv",
+        output / f"{args.name}_slices.csv",
+        output / f"{args.name}_metrics.json",
+    ]
+    existing = [str(path) for path in targets if path.exists()]
+    if existing:
+        raise FileExistsError(
+            "Held-out prediction reports are immutable; choose a new --name instead of overwriting: "
+            + ", ".join(existing)
+        )
     output.mkdir(parents=True, exist_ok=True)
     csv_path = output / f"{args.name}.csv"
     with csv_path.open("w", newline="", encoding="utf-8") as stream:

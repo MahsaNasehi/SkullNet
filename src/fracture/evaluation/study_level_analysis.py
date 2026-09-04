@@ -20,6 +20,7 @@ from typing import Any
 import numpy as np
 
 from fracture.data.dicom import load_study
+from fracture.data.metadata import load_metadata
 from fracture.data.windows import bone_window
 from fracture.evaluation.error_analysis import iou
 from fracture.evaluation.predict_fold import _best_f1_threshold
@@ -265,14 +266,21 @@ def _positive_rows(
             rows = grouped[series_id]
             per_gt = []
             meaningful_gt_slices = 0
+            spatially_matched_gt_slices = 0
             for row in rows:
-                _, scores = _filtered_slice(row, MEANINGFUL_CONFIDENCE)
+                boxes, scores = _filtered_slice(row, MEANINGFUL_CONFIDENCE)
                 if row["sop_uid"] in gt_sops:
                     score = max(scores, default=0.0)
                     per_gt.append((score, row["sop_uid"], int(row["slice_index"])))
                     meaningful_gt_slices += int(bool(scores))
+                    gt_boxes = json.loads(row["gt_boxes"])
+                    spatially_matched_gt_slices += int(any(
+                        iou(target, box) >= MATCH_IOU for target in gt_boxes for box in boxes
+                    ))
             best_gt = max(per_gt, default=(0.0, "", -1))
             item[f"{name}_gt_slices_with_prediction_0_01"] = meaningful_gt_slices
+            item[f"{name}_detected_any_gt_fracture_slice"] = bool(meaningful_gt_slices)
+            item[f"{name}_gt_slices_with_iou_0_5_match"] = spatially_matched_gt_slices
             item[f"{name}_best_gt_fracture_confidence"] = best_gt[0]
             item[f"{name}_best_gt_fracture_sop_uid"] = best_gt[1]
             item[f"{name}_best_gt_fracture_slice"] = best_gt[2]
@@ -348,8 +356,21 @@ def _threshold_sensitivity(
     output = []
     for threshold in DETECTOR_THRESHOLDS:
         paired, _, _ = _paired_study_rows(baseline_slices, pretrained_slices, threshold)
-        for name in ("baseline", "pretrained"):
+        for name, slice_rows in (("baseline", baseline_slices), ("pretrained", pretrained_slices)):
             metrics = _metrics(paired, name)
+            matched_gt_boxes = total_gt_boxes = gt_slices_with_prediction = gt_slices_with_match = 0
+            for row in slice_rows:
+                gt_boxes = json.loads(row["gt_boxes"])
+                boxes, _ = _filtered_slice(row, threshold)
+                if gt_boxes:
+                    gt_slices_with_prediction += int(bool(boxes))
+                    slice_has_match = False
+                    for target in gt_boxes:
+                        matched = max((iou(target, box) for box in boxes), default=0.0) >= MATCH_IOU
+                        matched_gt_boxes += int(matched)
+                        total_gt_boxes += 1
+                        slice_has_match = slice_has_match or matched
+                    gt_slices_with_match += int(slice_has_match)
             output.append({
                 "model": name,
                 "detector_confidence_threshold": threshold,
@@ -358,6 +379,11 @@ def _threshold_sensitivity(
                 "study_pr_auc": metrics["pr_auc"],
                 "sensitivity_at_study_0_5": metrics["sensitivity_at_0_5"],
                 "total_detections": sum(int(row[f"{name}_num_detections"]) for row in paired),
+                "matched_gt_boxes_iou_0_5": matched_gt_boxes,
+                "total_gt_boxes": total_gt_boxes,
+                "gt_box_recall_iou_0_5": matched_gt_boxes / total_gt_boxes if total_gt_boxes else 0.0,
+                "gt_positive_slices_with_any_prediction": gt_slices_with_prediction,
+                "gt_positive_slices_with_iou_0_5_match": gt_slices_with_match,
             })
     return output
 
@@ -438,6 +464,12 @@ def _draw_boxes(image: np.ndarray, boxes: list[list[float]], scores: list[float]
     return canvas
 
 
+def _top_detections(row: dict[str, str], threshold: float, limit: int = 10) -> tuple[list[list[float]], list[float]]:
+    boxes, scores = _filtered_slice(row, threshold)
+    ranked = sorted(zip(boxes, scores, strict=True), key=lambda item: item[1], reverse=True)[:limit]
+    return [item[0] for item in ranked], [item[1] for item in ranked]
+
+
 def _visualize(
     output: Path,
     positive: list[dict[str, Any]],
@@ -469,8 +501,8 @@ def _visualize(
         rec = record(series_id, sop_uid)
         image = bone_window(rec.hu, 500, 2500, rec.photometric_interpretation == "MONOCHROME1")
         gt = _draw_boxes(image, json.loads(b["gt_boxes"]), [], (0, 255, 0), "GT")
-        b_boxes, b_scores = _filtered_slice(b, DETECTOR_THRESHOLDS[0])
-        p_boxes, p_scores = _filtered_slice(p, DETECTOR_THRESHOLDS[0])
+        b_boxes, b_scores = _top_detections(b, MEANINGFUL_CONFIDENCE)
+        p_boxes, p_scores = _top_detections(p, MEANINGFUL_CONFIDENCE)
         b_canvas = _draw_boxes(image, b_boxes, b_scores, (255, 100, 0), "baseline")
         p_canvas = _draw_boxes(image, p_boxes, p_scores, (0, 0, 255), "pretrained")
         canvas = np.concatenate([gt, b_canvas, p_canvas], axis=1)
@@ -488,7 +520,7 @@ def _visualize(
             row = index[(series_id, sop_uid)]
             rec = record(series_id, sop_uid)
             image = bone_window(rec.hu, 500, 2500, rec.photometric_interpretation == "MONOCHROME1")
-            boxes, scores = _filtered_slice(row, DETECTOR_THRESHOLDS[0])
+            boxes, scores = _top_detections(row, MEANINGFUL_CONFIDENCE)
             panel = _draw_boxes(image, boxes, scores, (0, 0, 255), name)
             cv2.putText(panel, f"{name} slice={row['slice_index']} SOP={sop_uid}", (5, 18), cv2.FONT_HERSHEY_SIMPLEX, 0.36, (255, 255, 255), 1, cv2.LINE_AA)
             panels.append(panel)
@@ -557,6 +589,10 @@ def _report(
         "",
         "> Frozen Fold-0 validation; complete physically ordered studies; WL=500/WW=2500; 2.5D; max aggregation; no calibration. Exploratory thresholds are not unbiased test performance.",
         "",
+        f"> Full-study discovery evaluated {payload['protocol']['slices']} DICOM slices. The metadata table contains {payload['protocol']['metadata_validation_rows']} rows for these studies; the additional {payload['protocol']['full_study_slice_difference']} DICOM slices were retained because the competition input is the complete study.",
+        "",
+        *( [f"> **Baseline provenance limitation:** {payload['protocol']['baseline_provenance_note']}", ""]
+           if payload["protocol"].get("baseline_provenance_note") else [] ),
         "## A. Checkpoints",
         "",
         _markdown_table(checkpoint_rows, ["Model", "Path", "Bytes", "SHA256"]),
@@ -606,7 +642,7 @@ def _report(
         "",
         "## K. Detector-confidence sensitivity",
         "",
-        _markdown_table([[r["model"], r["detector_confidence_threshold"], f"{r['study_auroc']:.4f}", f"{r['study_pr_auc']:.4f}", f"{r['sensitivity_at_study_0_5']:.4f}", r["total_detections"]] for r in threshold_rows], ["Model", "Detector threshold", "AUROC", "PR-AUC", "Sensitivity@study 0.5", "Detections"]),
+        _markdown_table([[r["model"], r["detector_confidence_threshold"], f"{r['study_auroc']:.4f}", f"{r['study_pr_auc']:.4f}", f"{r['sensitivity_at_study_0_5']:.4f}", r["total_detections"], r["matched_gt_boxes_iou_0_5"], f"{r['gt_box_recall_iou_0_5']:.4f}"] for r in threshold_rows], ["Model", "Detector threshold", "AUROC", "PR-AUC", "Sensitivity@study 0.5", "Detections", "Matched GT boxes", "GT box recall"]),
         "",
         "Detector confidence threshold is not the final fracture probability threshold; the latter remains 0.5.",
         "",
@@ -631,10 +667,16 @@ def _answers(payload: dict[str, Any]) -> tuple[list[str], str]:
     ranking_better = p["auroc"] > b["auroc"] and p["pr_auc"] > b["pr_auc"]
     actual_b = payload["box_size_summary"]["baseline"]["detected"]["n"]
     actual_p = payload["box_size_summary"]["pretrained"]["detected"]["n"]
-    overlap = p["auroc"] < 0.7
+    distribution = payload["score_distributions"]["pretrained"]
+    overlap = (
+        distribution["negative"]["max"] >= distribution["positive"]["median"]
+        and distribution["positive"]["min"] <= distribution["negative"]["median"]
+    )
     threshold_rows = payload["detector_threshold_sensitivity"]
     p_rows = [row for row in threshold_rows if row["model"] == "pretrained"]
-    threshold_help = max(row["study_pr_auc"] for row in p_rows) > min(row["study_pr_auc"] for row in p_rows) + 0.02
+    low = next(row for row in p_rows if row["detector_confidence_threshold"] == 0.001)
+    standard = next(row for row in p_rows if row["detector_confidence_threshold"] == 0.01)
+    recovered_weak_matches = low["matched_gt_boxes_iou_0_5"] - standard["matched_gt_boxes_iou_0_5"]
     box = payload["box_size_summary"]["pretrained"]
     detected_area = box["detected"]["median_area_at_768"]
     missed_area = box["missed"]["median_area_at_768"]
@@ -642,8 +684,8 @@ def _answers(payload: dict[str, Any]) -> tuple[list[str], str]:
     answers = [
         ("Yes." if ranking_better else "No or inconclusive.") + f" Baseline AUROC/PR-AUC={b['auroc']:.4f}/{b['pr_auc']:.4f}; COCO={p['auroc']:.4f}/{p['pr_auc']:.4f}.",
         f"COCO matched {actual_p} GT boxes versus {actual_b} for baseline at confidence >=0.01 and IoU >=0.5; this separates actual fracture localization from confidence-only changes.",
-        ("Positive/negative overlap remains substantial, so this is not merely calibration." if overlap else "Ranking separation is useful while the 0.5 operating point is poor, consistent with under-confidence/calibration as an important component."),
-        ("Lower detector thresholds materially change ranking signal, indicating weak candidates were being discarded." if threshold_help else "Lower detector thresholds do not materially improve ranking signal; missed fractures are not explained mainly by the inference cutoff."),
+        ("Positive/negative overlap remains substantial, so the 0.5 errors are not merely a calibration problem." if overlap else "Ranking separation is useful while the 0.5 operating point is poor, consistent with calibration as an important component."),
+        (f"Lowering detector confidence from 0.01 to 0.001 recovers {recovered_weak_matches} additional COCO GT-box matches ({standard['matched_gt_boxes_iou_0_5']} to {low['matched_gt_boxes_iou_0_5']} of {low['total_gt_boxes']}), but study AUROC, PR-AUC, and sensitivity are unchanged. Thresholding discards some weak localizations, but it is not the main cause of low recall."),
         ("Yes; missed-box median area is smaller than detected-box median area." if small_misses else "No clear evidence that false negatives are disproportionately smaller from this fold."),
         "The selected option below is based on study AUROC and PR-AUC first, with slice/box evidence as supporting analysis.",
     ]
@@ -664,6 +706,10 @@ def main() -> None:
     parser.add_argument("--pretrained-weights", required=True)
     parser.add_argument("--output-dir", default="reports")
     parser.add_argument("--reuse-predictions", action="store_true")
+    parser.add_argument(
+        "--baseline-provenance-note",
+        help="Scientific limitation shown prominently when the requested baseline artifact is unavailable.",
+    )
     args = parser.parse_args()
 
     if args.fold != 0:
@@ -690,8 +736,15 @@ def main() -> None:
     pretrained_studies, pretrained_slices = _read_csv(pretrained_files[0]), _read_csv(pretrained_files[1])
     if len(baseline_studies) != 68 or len(pretrained_studies) != 68:
         raise RuntimeError(f"Fold-0 must contain 68 complete studies, got {len(baseline_studies)} and {len(pretrained_studies)}")
-    if len(baseline_slices) != 1633 or len(pretrained_slices) != 1633:
-        raise RuntimeError(f"Fold-0 must contain all 1,633 slices, got {len(baseline_slices)} and {len(pretrained_slices)}")
+    if len(baseline_slices) != len(pretrained_slices):
+        raise RuntimeError(
+            "Baseline and pretrained full-study slice counts differ: "
+            f"{len(baseline_slices)} != {len(pretrained_slices)}"
+        )
+    baseline_slice_keys = {(row["series_id"], row["sop_uid"]) for row in baseline_slices}
+    pretrained_slice_keys = {(row["series_id"], row["sop_uid"]) for row in pretrained_slices}
+    if baseline_slice_keys != pretrained_slice_keys or len(baseline_slice_keys) != len(baseline_slices):
+        raise RuntimeError("Full-study slice identities differ or contain duplicates")
 
     paired, base_features, pre_features = _paired_study_rows(
         baseline_slices, pretrained_slices, DETECTOR_THRESHOLDS[0]
@@ -709,6 +762,11 @@ def main() -> None:
     _write_csv(output / "fold0_aggregation_comparison.csv", aggregations)
     _plots(output, paired, boxes)
     cfg = load_config(config)
+    split = json.loads(Path(cfg["split"].get("path", "splits/folds.json")).read_text(encoding="utf-8"))
+    fold_zero = next(item for item in split["folds"] if int(item["fold"]) == 0)
+    metadata = load_metadata(require_path(cfg, "data", "metadata_path"))
+    metadata_series = metadata[cfg["data"]["series_id_column"]].astype(str)
+    metadata_validation_rows = int(metadata_series.isin(set(map(str, fold_zero["val_series"]))).sum())
     positive_visuals, negative_visuals = _visualize(
         output, positive, negatives, baseline_slices, pretrained_slices,
         require_path(cfg, "data", "dicom_root"),
@@ -718,6 +776,9 @@ def main() -> None:
             "fold": 0, "studies": len(paired), "positive_studies": len(positive),
             "slices": len(baseline_slices), "aggregation": "max", "calibration": "none",
             "detector_inference_floor": DETECTOR_THRESHOLDS[0], "study_threshold": 0.5,
+            "baseline_provenance_note": args.baseline_provenance_note,
+            "metadata_validation_rows": metadata_validation_rows,
+            "full_study_slice_difference": len(baseline_slices) - metadata_validation_rows,
         },
         "checkpoints": checkpoints,
         "detector_metrics": {

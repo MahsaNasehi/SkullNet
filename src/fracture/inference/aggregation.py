@@ -25,6 +25,10 @@ FEATURE_NAMES: tuple[str, ...] = (
     "count_ge_0_5",
     "fraction_ge_0_5",
     "longest_run_ge_0_5",
+    "median_spacing_mm",
+    "longest_run_mm_ge_0_1",
+    "longest_run_mm_ge_0_3",
+    "longest_run_mm_ge_0_5",
 )
 
 
@@ -36,10 +40,28 @@ def longest_run(values: list[float], threshold: float) -> int:
     return best
 
 
+def longest_run_mm(values: list[float], positions: list[float | None], threshold: float) -> float:
+    """Physical span of the longest above-threshold contiguous slice run."""
+    if len(values) != len(positions) or not values or any(position is None for position in positions):
+        return 0.0
+    best = 0.0
+    start: int | None = None
+    for index, value in enumerate(values + [float("-inf")]):
+        if value >= threshold and start is None:
+            start = index
+        elif value < threshold and start is not None:
+            end = index - 1
+            best = max(best, abs(float(positions[end]) - float(positions[start])))
+            start = None
+    return float(best)
+
+
 def aggregation_features(
     scores: list[float],
     detection_counts: list[int] | None = None,
+    physical_positions: list[float | None] | None = None,
     thresholds: tuple[float, ...] = (0.1, 0.3, 0.5),
+    extra_features: dict[str, float] | None = None,
 ) -> dict[str, float]:
     array = np.asarray(scores, dtype=float)
     if array.size == 0:
@@ -62,6 +84,15 @@ def aggregation_features(
         result[f"count_ge_{key}"] = float(count)
         result[f"fraction_ge_{key}"] = float(count / len(array))
         result[f"longest_run_ge_{key}"] = float(longest_run(scores, threshold))
+    positions = physical_positions or []
+    valid_positions = np.asarray([float(value) for value in positions if value is not None], dtype=float)
+    spacing = np.abs(np.diff(valid_positions)) if valid_positions.size > 1 else np.asarray([], dtype=float)
+    result["median_spacing_mm"] = float(np.median(spacing)) if spacing.size else 0.0
+    for threshold in (0.1, 0.3, 0.5):
+        key = str(threshold).replace(".", "_")
+        result[f"longest_run_mm_ge_{key}"] = longest_run_mm(scores, positions, threshold)
+    if extra_features:
+        result.update({str(name): float(value) for name, value in extra_features.items()})
     return result
 
 
@@ -85,8 +116,19 @@ class StudyAggregator:
         self.min_run = int(min_run)
         self.run_threshold = float(run_threshold)
 
-    def predict(self, scores: list[float], detection_counts: list[int] | None = None) -> float:
-        features = aggregation_features(scores, detection_counts)
+    def predict(
+        self,
+        scores: list[float],
+        detection_counts: list[int] | None = None,
+        physical_positions: list[float | None] | None = None,
+        extra_features: dict[str, float] | None = None,
+    ) -> float:
+        features = aggregation_features(
+            scores,
+            detection_counts,
+            physical_positions,
+            extra_features=extra_features,
+        )
         if self.method == "max":
             return float(np.clip(features["max_confidence"], 0, 1))
         if self.method == "top3_mean":

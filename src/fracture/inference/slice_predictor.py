@@ -2,7 +2,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
-from fracture.data.windows import bone_window, make_input
+from fracture.data.windows import make_hu_input
 
 
 @dataclass(frozen=True)
@@ -19,9 +19,25 @@ def predict_slices(
     window_width: float = 2500,
     batch_size: int = 8,
     boundary_mode: str = "repeat",
+    context_distance_mm: float | None = None,
 ) -> list[SlicePrediction]:
-    windows = [bone_window(x.hu, window_level, window_width, x.photometric_interpretation == "MONOCHROME1") for x in records]
-    images = [make_input(windows, i, input_mode, boundary_mode=boundary_mode) for i in range(len(windows))]
+    hu_images = [x.hu for x in records]
+    monochrome1 = [x.photometric_interpretation == "MONOCHROME1" for x in records]
+    physical_positions = [x.physical_position for x in records]
+    images = [
+        make_hu_input(
+            hu_images,
+            i,
+            level=window_level,
+            width=window_width,
+            mode=input_mode,
+            boundary_mode=boundary_mode,
+            monochrome1=monochrome1,
+            physical_positions=physical_positions,
+            context_distance_mm=context_distance_mm,
+        )
+        for i in range(len(hu_images))
+    ]
     output: list[SlicePrediction] = []
     for start in range(0, len(images), batch_size):
         detections = detector.predict_batch(images[start:start + batch_size])

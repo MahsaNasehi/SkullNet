@@ -15,16 +15,20 @@ def main() -> None:
     parser.add_argument("--study-dir", action="append", required=True)
     parser.add_argument("--aggregator")
     parser.add_argument("--calibrator")
-    parser.add_argument("--aggregation-method", default="max")
+    parser.add_argument("--study-model")
+    parser.add_argument("--aggregation-method", choices=["max", "top3_mean", "consecutive", "logistic"])
     parser.add_argument("--calibration-method", default="none")
     parser.add_argument("--input-mode", default="2.5d")
     parser.add_argument("--image-size", type=int, default=768)
+    parser.add_argument("--window-level", type=float, default=800.0)
+    parser.add_argument("--window-width", type=float, default=1600.0)
+    parser.add_argument("--context-distance-mm", type=float, default=5.0)
     parser.add_argument("--output", default="reports/acceptance_smoke.json")
     parser.add_argument("--device", default="cpu")
     args = parser.parse_args()
 
-    aggregator = args.aggregator if Path(args.aggregator).is_file() else None
-    calibrator = args.calibrator if Path(args.calibrator).is_file() else None
+    aggregator = args.aggregator if args.aggregator and Path(args.aggregator).is_file() else None
+    calibrator = args.calibrator if args.calibrator and Path(args.calibrator).is_file() else None
     method = args.aggregation_method
     calibration = args.calibration_method
 
@@ -33,10 +37,14 @@ def main() -> None:
         args.weights,
         aggregator_path=aggregator,
         calibrator_path=calibrator,
+        study_model_path=args.study_model,
         aggregation_method=method,
         calibration_method=calibration,
         input_mode=args.input_mode,
         image_size=args.image_size,
+        window_level=args.window_level,
+        window_width=args.window_width,
+        context_distance_mm=args.context_distance_mm,
         device=args.device,
         fp16=args.device != "cpu",
         confidence=0.01,
@@ -59,7 +67,7 @@ def main() -> None:
 
     payload = {
         "model_load_seconds": load_s,
-        "aggregation_method": method,
+        "aggregation_method": predictor.aggregator.method,
         "calibration_method": calibration,
         "peak_vram_bytes": peak,
         "studies": rows,

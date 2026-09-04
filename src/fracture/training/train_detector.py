@@ -187,6 +187,7 @@ def main() -> None:
     parser.add_argument("--epochs", type=int)
     parser.add_argument("--batch-size", type=int)
     parser.add_argument("--workers", type=int)
+    parser.add_argument("--patience", type=int)
     parser.add_argument("--run-name", default="detector")
     parser.add_argument(
         "--resume-from",
@@ -206,6 +207,8 @@ def main() -> None:
     resume_checkpoint = args.resume_from.resolve() if args.resume_from else None
     if resume_checkpoint and not resume_checkpoint.is_file():
         raise FileNotFoundError(resume_checkpoint)
+    if resume_checkpoint and resume_checkpoint.stat().st_size < 100_000:
+        raise ValueError(f"Resume checkpoint is empty, truncated, or implausibly small: {resume_checkpoint}")
 
     # Resolve/download development-time initialization before enforcing offline mode.
     plan = None if resume_checkpoint else resolve_initialization(model_cfg)
@@ -313,7 +316,7 @@ def main() -> None:
             "imgsz": cfg["preprocessing"]["image_size"],
             "batch": args.batch_size or train["batch_size"],
             "workers": args.workers if args.workers is not None else train["workers"],
-            "patience": train["patience"],
+            "patience": args.patience if args.patience is not None else train["patience"],
             "device": train["device"],
             "seed": train.get("seed", 42),
             "project": str(output),

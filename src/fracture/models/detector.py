@@ -17,7 +17,10 @@ class Detector:
         image_size: int = 640,
     ):
         path = Path(weights)
-        if not path.is_file(): raise FileNotFoundError(f"Local detector weights not found: {path}")
+        if not path.is_file():
+            raise FileNotFoundError(f"Local detector weights not found: {path}")
+        if path.stat().st_size < 100_000:
+            raise ValueError(f"Detector checkpoint is empty, truncated, or implausibly small: {path}")
         # Final inference is always self-contained. Development-time checkpoint
         # acquisition is handled separately by fracture.utils.pretrained.
         os.environ["YOLO_OFFLINE"] = "1"
