@@ -13,6 +13,15 @@ from fracture.models.detector import Detector
 from fracture.models.study_mil import StudyMIL, pool_slice_logits
 from fracture.training.hard_negative_mining import select_hard_negatives
 from fracture.training.train_study_mil import StudyDataset
+from fracture.utils.config import load_config
+
+
+def test_output_root_can_be_overridden_for_large_rendered_datasets(tmp_path: Path, monkeypatch):
+    config_path = tmp_path / "config.yaml"
+    config_path.write_text("data:\n  output_root: /dev/shm/default\n", encoding="utf-8")
+    destination = tmp_path / "large-dataset-volume"
+    monkeypatch.setenv("FRACTURE_OUTPUT_ROOT", str(destination))
+    assert load_config(config_path)["data"]["output_root"] == str(destination)
 
 
 def test_window_contract_and_physical_25d_context():

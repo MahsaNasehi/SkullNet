@@ -19,7 +19,6 @@ test -d iaaa-contest-bct/Data/training
 test -d iaaa-contest-bct/Data/annotations
 test -f iaaa-contest-bct/Data/training_df.pkl
 test -s artifacts/pretrained/yolo11s.pt
-df -h /dev/shm
 ```
 
 Replace `/absolute/path/to/fracture` with the actual clone location. For example,
@@ -29,13 +28,33 @@ the local workstation path is currently:
 cd "/home/mahsa-nasehi/Desktop/IAAA/fracture"
 ```
 
-### 2. Prepare the HU dataset
+### 2. Choose storage and prepare the HU dataset
 
-The rendered training data lives in `/dev/shm` and disappears after a reboot.
-Generate it only when `fold_0.yaml` is absent:
+Rendered PNGs require substantially more space than the source annotations.
+Choose a writable location with enough free space. Set it once in the shell;
+every prepare, detector, evaluation, HNM, and MIL phase will then use the same
+location. If the variable is unset, the backward-compatible default is
+`/dev/shm/iaaa_fracture`.
+
+For the `19vira-vision-12-dev` server use:
 
 ```bash
-if [ ! -f /dev/shm/iaaa_fracture/fracture_dataset_v2_hu800_ww1600_original/fold_0.yaml ]; then
+export FRACTURE_OUTPUT_ROOT=/mnt/mohammad.rezaei/TRAIN_SKULL/iaaa_fracture
+mkdir -p "$FRACTURE_OUTPUT_ROOT"
+test -w "$FRACTURE_OUTPUT_ROOT"
+df -h "$FRACTURE_OUTPUT_ROOT"
+```
+
+Export this variable again after opening a new terminal, or add the export line
+to the server environment setup. A tmux launch must receive the same value, as
+shown in the training command below.
+
+Generate the dataset only when `fold_0.yaml` is absent:
+
+```bash
+ORIGINAL_DATASET="$FRACTURE_OUTPUT_ROOT/fracture_dataset_v2_hu800_ww1600_original"
+
+if [ ! -f "$ORIGINAL_DATASET/fold_0.yaml" ]; then
   PYTHONPATH=src python -m fracture.data.prepare_yolo \
     --config configs/fracture_25d_p2_hu800_original.yaml
 fi
@@ -47,8 +66,8 @@ directory is incomplete. Preserve it under another name and regenerate:
 
 ```bash
 mv \
-  /dev/shm/iaaa_fracture/fracture_dataset_v2_hu800_ww1600_original \
-  /dev/shm/iaaa_fracture/fracture_dataset_v2_hu800_ww1600_original.incomplete
+  "$ORIGINAL_DATASET" \
+  "${ORIGINAL_DATASET}.incomplete"
 
 PYTHONPATH=src python -m fracture.data.prepare_yolo \
   --config configs/fracture_25d_p2_hu800_original.yaml
@@ -58,8 +77,8 @@ If the `.incomplete` name already exists, use `.incomplete_2` or another unique
 name. Confirm successful preparation before training:
 
 ```bash
-test -f /dev/shm/iaaa_fracture/fracture_dataset_v2_hu800_ww1600_original/fold_0.yaml
-cat /dev/shm/iaaa_fracture/fracture_dataset_v2_hu800_ww1600_original/fold_stats.csv
+test -f "$ORIGINAL_DATASET/fold_0.yaml"
+cat "$ORIGINAL_DATASET/fold_stats.csv"
 ```
 
 ### 3. Start the current Fold-0 training in tmux
@@ -80,7 +99,8 @@ mkdir -p logs
 MASKFO_PYTHON="$(command -v python)"
 
 tmux new-session -d -s fracture_hu800 -c "$PWD" \
-  "env PYTHON='$MASKFO_PYTHON' ./scripts/run_improved_pipeline.sh train-original-fold0 \
+  "env PYTHON='$MASKFO_PYTHON' FRACTURE_OUTPUT_ROOT='$FRACTURE_OUTPUT_ROOT' \
+  ./scripts/run_improved_pipeline.sh train-original-fold0 \
   2>&1 | tee logs/train-original-fold0.log"
 ```
 
@@ -147,7 +167,8 @@ For a long unattended run, launch it in a new tmux session:
 ```bash
 MASKFO_PYTHON="$(command -v python)"
 tmux new-session -d -s fracture_oof -c "$PWD" \
-  "env PYTHON='$MASKFO_PYTHON' ./scripts/run_improved_pipeline.sh train-original-oof \
+  "env PYTHON='$MASKFO_PYTHON' FRACTURE_OUTPUT_ROOT='$FRACTURE_OUTPUT_ROOT' \
+  ./scripts/run_improved_pipeline.sh train-original-oof \
   2>&1 | tee logs/train-original-oof.log"
 ```
 
@@ -226,7 +247,7 @@ The supplied dataset is mounted in `iaaa-contest-bct/Data`. It contains 338 stud
 
 The study target is strongly imbalanced: 28/338 studies are fracture-positive (`8.28%`) and 310/338 are negative (`91.72%`). There are 260 positive slices and 356 boxes. Splits are patient-grouped; sampling/oversampling is applied only to each training partition, while every held-out study and all of its slices remain in validation.
 
-A full pixel-decode audit passed for all DICOM files, including 3,148 JPEG Lossless instances. Patient-grouped folds are frozen in `splits/folds.json`. The rendered YOLO dataset is deliberately stored in `/dev/shm/iaaa_fracture` because the main filesystem has limited free space. `/dev/shm` is volatile, so regenerate the rendered dataset after a reboot; the source DICOMs remain authoritative.
+A full pixel-decode audit passed for all DICOM files, including 3,148 JPEG Lossless instances. Patient-grouped folds are frozen in `splits/folds.json`. Rendered YOLO data uses `FRACTURE_OUTPUT_ROOT` when it is set and otherwise defaults to `/dev/shm/iaaa_fracture`. The `/dev/shm` default is volatile, so regenerate it after a reboot; persistent mounted storage is preferred when shared memory is too small. The source DICOMs remain authoritative.
 
 ## Official environment versus the historical `maskfo` server
 

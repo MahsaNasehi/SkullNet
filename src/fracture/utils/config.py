@@ -1,9 +1,15 @@
 """Strict configuration loading without hidden defaults or downloads."""
 from __future__ import annotations
+
+import os
 from copy import deepcopy
 from pathlib import Path
 from typing import Any
+
 import yaml
+
+
+OUTPUT_ROOT_ENV = "FRACTURE_OUTPUT_ROOT"
 
 
 def load_config(path: str | Path) -> dict[str, Any]:
@@ -12,6 +18,14 @@ def load_config(path: str | Path) -> dict[str, Any]:
         config = yaml.safe_load(stream) or {}
     if not isinstance(config, dict):
         raise ValueError(f"Configuration must be a mapping: {path}")
+    output_root = os.environ.get(OUTPUT_ROOT_ENV)
+    if output_root:
+        data = config.get("data")
+        if not isinstance(data, dict):
+            raise ValueError(
+                f"{OUTPUT_ROOT_ENV} is set but the configuration has no data mapping: {path}"
+            )
+        data["output_root"] = str(Path(output_root).expanduser())
     return config
 
 
@@ -27,4 +41,3 @@ def require_path(config: dict[str, Any], section: str, key: str) -> Path:
     if not value:
         raise ValueError(f"Required configuration value is missing: {section}.{key}")
     return Path(value).expanduser().resolve()
-
