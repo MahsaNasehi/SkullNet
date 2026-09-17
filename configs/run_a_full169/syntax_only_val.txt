@@ -1,0 +1,1 @@
+/mnt/mohammad.rezaei/TRAIN_SKULL/YOLO_12/data_prepared/skull_hu800_ww1600/images/train/1488__1.2.392.200036.9116.2.6.1.48.1211476691.1503596498.544826.png

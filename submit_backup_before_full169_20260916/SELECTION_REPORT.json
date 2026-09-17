@@ -1,0 +1,60 @@
+{
+  "selection_date": "2026-09-15",
+  "primary_metric": "oracle_other_heads_macro_f1",
+  "metric_scope_warning": "Ground-truth ICH volumes and MLS were used for checkpoint selection. This is not the final Macro-F1 of the standalone fracture-only submission, whose ICH and MLS outputs are zero placeholders.",
+  "authoritative_oof_cohort": {
+    "studies": 169,
+    "per_fold": [33, 33, 32, 36, 35]
+  },
+  "selected_checkpoint": {
+    "run": "Run A 768",
+    "fold": 2,
+    "source": "outputs/yolo26s_p2_hu800_ww1600_fold2/weights/best.pt",
+    "packaged": "submit/models/best.pt",
+    "sha256": "6c3635082f4ed0e15d549e02e3a7faeaec0293299a06b01d342d8f2e3853f206",
+    "heldout_studies": 32,
+    "heldout_oracle_other_heads_macro_f1": 1.0,
+    "heldout_cross_fitted_aggregator": "top10_percent_mean",
+    "heldout_cross_fitted_raw_operating_point": 0.41237386067708337
+  },
+  "per_fold_heldout_cross_fitted_macro_f1": {
+    "0": 0.9285714285714285,
+    "1": 0.9764982373678026,
+    "2": 1.0,
+    "3": 0.9789147286821706,
+    "4": 0.9658994032395567
+  },
+  "run_a_unbiased_pooled_cross_fitted": {
+    "oracle_other_heads_macro_f1": 0.9696273781380164,
+    "fracture_tp_fp_fn_tn": [7, 3, 17, 142],
+    "fracture_sensitivity": 0.2916666666666667,
+    "fracture_specificity": 0.9793103448275862,
+    "fracture_precision": 0.7,
+    "fracture_pr_auc": 0.5355486380673358
+  },
+  "deployment_postprocessing": {
+    "selection_role": "apparent all-OOF deployment setting; not unbiased performance",
+    "aggregator": "top10_percent_mean",
+    "raw_operating_point": 0.39717610677083337,
+    "official_fracture_cutoff_after_monotonic_mapping": 0.5,
+    "apparent_all_oof_oracle_other_heads_macro_f1": 0.9851285968933028
+  },
+  "rejected_candidates": {
+    "Run B 1024": {
+      "decision": "REJECT_1024",
+      "authoritative_oof_macro_f1": 0.9549576415281188,
+      "delta_vs_selected_run_a": -0.014669736609897566,
+      "patient_clustered_delta_95_ci": [-0.051953966788741764, 0.01968792409253023]
+    },
+    "AUG_MILD_768": {
+      "decision": "REJECT_AUG_MILD_768",
+      "training_status": "all five folds completed",
+      "authoritative_oof_macro_f1": 0.9384685620946521,
+      "delta_vs_selected_run_a": -0.031158816043364235,
+      "patient_clustered_delta_95_ci": [-0.08027122604476968, 0.011104446955775817],
+      "fracture_tp_fp_fn_tn": [3, 14, 21, 131],
+      "fracture_pr_auc": 0.33494973555148366
+    }
+  },
+  "checkpoint_selection_limitation": "Fold checkpoints are evaluated on different held-out patient groups. Fold 2 has only 32 held-out Studies and five fracture-positive Studies; selection uncertainty is substantial."
+}

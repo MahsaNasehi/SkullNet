@@ -1,0 +1,573 @@
+<!DOCTYPE html><html><head><style data-styled="true" data-styled-version="5.3.11">.cOTFKg{-webkit-box-flex:0;-webkit-flex-grow:0;-ms-flex-positive:0;flex-grow:0;-webkit-box-pack:start;-webkit-justify-content:start;-ms-flex-pack:start;justify-content:start;color:#111319;font-family:-apple-system,BlinkMacSystemFont,Inter,'Segoe UI',Roboto,Oxygen,sans-serif;font-weight:400;font-size:1em;line-height:-0.011;width:100%;}/*!sc*/
+.cOTFKg .mention{background:#EDF2F7;border-radius:8px;padding-bottom:2px;padding-top:1px;padding-left:4px;padding-right:4px;font-weight:500;font-size:0.9em;cursor:default;}/*!sc*/
+.cOTFKg .mention::before{content:"@";}/*!sc*/
+.cOTFKg > div{background:transparent;}/*!sc*/
+.cOTFKg *{box-sizing:content-box;}/*!sc*/
+.cOTFKg .ProseMirror{position:relative;outline:none;word-wrap:break-word;white-space:pre-wrap;white-space:break-spaces;padding:initial;margin:initial;}/*!sc*/
+.cOTFKg .ProseMirror .ProseMirror{padding:0;margin:0;}/*!sc*/
+.cOTFKg .ProseMirror > .ProseMirror-yjs-cursor{display:none;}/*!sc*/
+.cOTFKg .ProseMirror > *{margin-top:.5em;margin-bottom:.5em;}/*!sc*/
+.cOTFKg .ProseMirror > *:last-child{margin-bottom:0;}/*!sc*/
+.cOTFKg .ProseMirror > :first-child,.cOTFKg .ProseMirror > button:first-child + *{margin-top:0;}/*!sc*/
+.cOTFKg .ProseMirror h1,.cOTFKg .ProseMirror h2,.cOTFKg .ProseMirror h3,.cOTFKg .ProseMirror h4,.cOTFKg .ProseMirror h5,.cOTFKg .ProseMirror h6{margin-top:1em;margin-bottom:0.25em;font-weight:600;cursor:text;}/*!sc*/
+.cOTFKg .ProseMirror h1 + p,.cOTFKg .ProseMirror h2 + p,.cOTFKg .ProseMirror h3 + p,.cOTFKg .ProseMirror h4 + p,.cOTFKg .ProseMirror h5 + p,.cOTFKg .ProseMirror h6 + p,.cOTFKg .ProseMirror h1 + .ProseMirror-widget + p,.cOTFKg .ProseMirror h2 + .ProseMirror-widget + p,.cOTFKg .ProseMirror h3 + .ProseMirror-widget + p,.cOTFKg .ProseMirror h4 + .ProseMirror-widget + p,.cOTFKg .ProseMirror h5 + .ProseMirror-widget + p,.cOTFKg .ProseMirror h6 + .ProseMirror-widget + p{margin-top:0.25em;}/*!sc*/
+.cOTFKg .ProseMirror h1:not(.placeholder)::before,.cOTFKg .ProseMirror h2:not(.placeholder)::before,.cOTFKg .ProseMirror h3:not(.placeholder)::before,.cOTFKg .ProseMirror h4:not(.placeholder)::before,.cOTFKg .ProseMirror h5:not(.placeholder)::before,.cOTFKg .ProseMirror h6:not(.placeholder)::before{display:none;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,Courier,monospace;color:#394351;font-size:13px;font-weight:500;line-height:0;margin-left:-24px;-webkit-transition:opacity 150ms ease-in-out;transition:opacity 150ms ease-in-out;opacity:0;width:24px;}/*!sc*/
+.cOTFKg .ProseMirror h1:not(.placeholder):dir(rtl)::before,.cOTFKg .ProseMirror h2:not(.placeholder):dir(rtl)::before,.cOTFKg .ProseMirror h3:not(.placeholder):dir(rtl)::before,.cOTFKg .ProseMirror h4:not(.placeholder):dir(rtl)::before,.cOTFKg .ProseMirror h5:not(.placeholder):dir(rtl)::before,.cOTFKg .ProseMirror h6:not(.placeholder):dir(rtl)::before{margin-left:0;margin-right:-24px;}/*!sc*/
+.cOTFKg .ProseMirror h1:hover .heading-actions,.cOTFKg .ProseMirror h2:hover .heading-actions,.cOTFKg .ProseMirror h3:hover .heading-actions,.cOTFKg .ProseMirror h4:hover .heading-actions,.cOTFKg .ProseMirror h5:hover .heading-actions,.cOTFKg .ProseMirror h6:hover .heading-actions,.cOTFKg .ProseMirror h1:focus-within .heading-actions,.cOTFKg .ProseMirror h2:focus-within .heading-actions,.cOTFKg .ProseMirror h3:focus-within .heading-actions,.cOTFKg .ProseMirror h4:focus-within .heading-actions,.cOTFKg .ProseMirror h5:focus-within .heading-actions,.cOTFKg .ProseMirror h6:focus-within .heading-actions{opacity:1;}/*!sc*/
+.cOTFKg .ProseMirror h1{font-size:28px;}/*!sc*/
+.cOTFKg .ProseMirror h2{font-size:22px;}/*!sc*/
+.cOTFKg .ProseMirror h3{font-size:18px;}/*!sc*/
+.cOTFKg .ProseMirror h4{font-size:16px;}/*!sc*/
+.cOTFKg .ProseMirror h5{font-size:15px;}/*!sc*/
+.cOTFKg .ProseMirror h6{font-size:15px;}/*!sc*/
+.cOTFKg .ProseMirror .ProseMirror-yjs-selection{-webkit-transition:background-color 500ms ease-in-out;transition:background-color 500ms ease-in-out;}/*!sc*/
+.cOTFKg .ProseMirror .ProseMirror-yjs-cursor{position:relative;margin-left:-1px;margin-right:-1px;border-left:1px solid black;border-right:1px solid black;height:1em;word-break:normal;}/*!sc*/
+.cOTFKg .ProseMirror .ProseMirror-yjs-cursor::after{content:"";display:block;position:absolute;left:-8px;right:-8px;top:0;bottom:0;}/*!sc*/
+.cOTFKg .ProseMirror .ProseMirror-yjs-cursor > div{opacity:0;-webkit-transition:opacity 100ms ease-in-out;transition:opacity 100ms ease-in-out;position:absolute;top:-1.8em;font-size:13px;background-color:rgb(250,129,0);font-style:normal;line-height:normal;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;white-space:nowrap;color:white;padding:2px 6px;font-weight:500;border-radius:4px;pointer-events:none;left:-1px;}/*!sc*/
+.cOTFKg .ProseMirror .ProseMirror-yjs-cursor:hover > div{opacity:1;}/*!sc*/
+.cOTFKg.show-cursor-names .ProseMirror-yjs-cursor > div{opacity:1;}/*!sc*/
+.cOTFKg pre{white-space:pre-wrap;}/*!sc*/
+.cOTFKg li{position:relative;}/*!sc*/
+.cOTFKg iframe.embed{width:100%;height:400px;border:1px solid #DAE1E9;border-radius:6px;}/*!sc*/
+.cOTFKg .image,.cOTFKg .video{line-height:0;text-align:center;max-width:100%;clear:both;position:relative;z-index:1;}/*!sc*/
+.cOTFKg .image img,.cOTFKg .video img,.cOTFKg .image video,.cOTFKg .video video{pointer-events:none;display:inline-block;max-width:100%;}/*!sc*/
+.cOTFKg .image video,.cOTFKg .video video{pointer-events:initial;max-width:100%;height:auto;background:#FFFFFF;color:#111319 !important;margin:-2px;padding:2px;border-radius:8px;box-shadow:0 0 0 1px #DAE1E9;}/*!sc*/
+.cOTFKg .image .ProseMirror-selectednode img,.cOTFKg .video .ProseMirror-selectednode img{pointer-events:initial;}/*!sc*/
+.cOTFKg .image.placeholder,.cOTFKg .video.placeholder{position:relative;background:#FFFFFF;margin-bottom:calc(28px + 1.2em);}/*!sc*/
+.cOTFKg .image.placeholder img,.cOTFKg .video.placeholder img,.cOTFKg .image.placeholder video,.cOTFKg .video.placeholder video{opacity:0.5;}/*!sc*/
+.cOTFKg .image.placeholder video,.cOTFKg .video.placeholder video{border-radius:8px;}/*!sc*/
+.cOTFKg .file.placeholder{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-align-items:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;background:#FFFFFF;box-shadow:0 0 0 1px #DAE1E9;white-space:nowrap;border-radius:8px;padding:6px 8px;max-width:840px;cursor:default;margin-top:0.5em;margin-bottom:0.5em;}/*!sc*/
+.cOTFKg .file.placeholder .title,.cOTFKg .file.placeholder .subtitle{margin-left:8px;}/*!sc*/
+.cOTFKg .file.placeholder .title{font-weight:600;font-size:14px;color:#111319;}/*!sc*/
+.cOTFKg .file.placeholder .subtitle{font-size:13px;color:#9BA6B2;line-height:0;}/*!sc*/
+.cOTFKg .file.placeholder span{font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,Courier,monospace;}/*!sc*/
+.cOTFKg .attachment-replacement-uploading .widget{opacity:0.5;}/*!sc*/
+.cOTFKg .image-replacement-uploading img{opacity:0.5;}/*!sc*/
+.cOTFKg .image-right-50{float:right;margin-left:2em;margin-bottom:1em;clear:initial;}/*!sc*/
+.cOTFKg .image-left-50{float:left;margin-right:2em;margin-bottom:1em;clear:initial;}/*!sc*/
+.cOTFKg .image-full-width{width:initial;max-width:100vw;clear:both;position:initial;-webkit-transform:translateX(calc(50% + var(--container-width) * -0.5));-ms-transform:translateX(calc(50% + var(--container-width) * -0.5));transform:translateX(calc(50% + var(--container-width) * -0.5));}/*!sc*/
+.cOTFKg .image-full-width img{max-width:100vw;max-height:min(450px,50vh);object-fit:cover;object-position:center;}/*!sc*/
+.cOTFKg .table-full-width{-webkit-transform:translateX(calc(50% + 32px + var(--container-width) * -0.5));-ms-transform:translateX(calc(50% + 32px + var(--container-width) * -0.5));transform:translateX(calc(50% + 32px + var(--container-width) * -0.5));}/*!sc*/
+.cOTFKg .table-full-width .table-scrollable,.cOTFKg .table-full-width table{width:calc(var(--container-width) - 64px);}/*!sc*/
+.cOTFKg .table-full-width.table-shadow-right::after{left:calc(var(--container-width) - 96px);}/*!sc*/
+.cOTFKg .column-resize-handle{-webkit-animation:hUniol 150ms ease-in-out;animation:hUniol 150ms ease-in-out;position:absolute;right:-1px;top:0;bottom:-1px;width:2px;z-index:20;background-color:#111319;pointer-events:none;}/*!sc*/
+.cOTFKg .resize-cursor{cursor:ew-resize;cursor:col-resize;}/*!sc*/
+.cOTFKg .ProseMirror-hideselection *::selection{background:transparent;}/*!sc*/
+.cOTFKg .ProseMirror-hideselection *::-moz-selection{background:transparent;}/*!sc*/
+.cOTFKg .ProseMirror-hideselection{caret-color:transparent;}/*!sc*/
+.cOTFKg .ProseMirror-selectednode{outline:2px solid #0366d6;}/*!sc*/
+@media print{.cOTFKg .ProseMirror-selectednode{outline:none;}}/*!sc*/
+.cOTFKg li.ProseMirror-selectednode{outline:none;}/*!sc*/
+.cOTFKg li.ProseMirror-selectednode::after{content:"";position:absolute;left:-32px;right:-2px;top:-2px;bottom:-2px;border:2px solid #0366d6;pointer-events:none;}/*!sc*/
+.cOTFKg li.ProseMirror-selectednode:dir(rtl)::after{left:-2px;right:-32px;}/*!sc*/
+.cOTFKg img.ProseMirror-separator{display:inline;border:none !important;margin:0 !important;}/*!sc*/
+.cOTFKg .component-image + img.ProseMirror-separator,.cOTFKg .component-image + img.ProseMirror-separator + br.ProseMirror-trailingBreak{display:none;}/*!sc*/
+.cOTFKg .ProseMirror[contenteditable="false"] .caption{pointer-events:none;}/*!sc*/
+.cOTFKg .ProseMirror[contenteditable="false"] .caption:empty{visibility:hidden;}/*!sc*/
+.cOTFKg .heading-content::before{content:"​";display:inline;}/*!sc*/
+.cOTFKg .heading-name{color:#111319;pointer-events:none;display:block;position:relative;top:-60px;visibility:hidden;}/*!sc*/
+.cOTFKg .heading-name:hover{-webkit-text-decoration:none;text-decoration:none;}/*!sc*/
+.cOTFKg .heading-name:first-child + h1,.cOTFKg .heading-name:first-child + .ProseMirror-yjs-cursor + h1,.cOTFKg .heading-name:first-child + h2,.cOTFKg .heading-name:first-child + .ProseMirror-yjs-cursor + h2,.cOTFKg .heading-name:first-child + h3,.cOTFKg .heading-name:first-child + .ProseMirror-yjs-cursor + h3,.cOTFKg .heading-name:first-child + h4,.cOTFKg .heading-name:first-child + .ProseMirror-yjs-cursor + h4{margin-top:0;}/*!sc*/
+.cOTFKg a:first-child h1,.cOTFKg a:first-child h2,.cOTFKg a:first-child h3,.cOTFKg a:first-child h4,.cOTFKg a:first-child h5,.cOTFKg a:first-child h6{margin-top:0;}/*!sc*/
+.cOTFKg h1:not(.placeholder)::before{content:"H1";}/*!sc*/
+.cOTFKg h2:not(.placeholder)::before{content:"H2";}/*!sc*/
+.cOTFKg h3:not(.placeholder)::before{content:"H3";}/*!sc*/
+.cOTFKg h4:not(.placeholder)::before{content:"H4";}/*!sc*/
+.cOTFKg h5:not(.placeholder)::before{content:"H5";}/*!sc*/
+.cOTFKg h6:not(.placeholder)::before{content:"H6";}/*!sc*/
+.cOTFKg .ProseMirror[contenteditable="true"]:focus-within h1:not(.placeholder):before,.cOTFKg .ProseMirror-focused h1:not(.placeholder):before,.cOTFKg .ProseMirror[contenteditable="true"]:focus-within h2:not(.placeholder):before,.cOTFKg .ProseMirror-focused h2:not(.placeholder):before,.cOTFKg .ProseMirror[contenteditable="true"]:focus-within h3:not(.placeholder):before,.cOTFKg .ProseMirror-focused h3:not(.placeholder):before,.cOTFKg .ProseMirror[contenteditable="true"]:focus-within h4:not(.placeholder):before,.cOTFKg .ProseMirror-focused h4:not(.placeholder):before,.cOTFKg .ProseMirror[contenteditable="true"]:focus-within h5:not(.placeholder):before,.cOTFKg .ProseMirror-focused h5:not(.placeholder):before,.cOTFKg .ProseMirror[contenteditable="true"]:focus-within h6:not(.placeholder):before,.cOTFKg .ProseMirror-focused h6:not(.placeholder):before{opacity:1;}/*!sc*/
+.cOTFKg .with-emoji{margin-left:-1em;}/*!sc*/
+.cOTFKg .heading-anchor,.cOTFKg .heading-fold{display:inline-block;color:#111319;opacity:.75;cursor:var(--pointer);background:none;outline:none;border:0;margin:0;padding:0;text-align:left;font-weight:500;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,Courier,monospace;font-size:14px;line-height:0;width:12px;height:24px;}/*!sc*/
+.cOTFKg .heading-anchor:focus,.cOTFKg .heading-fold:focus,.cOTFKg .heading-anchor:hover,.cOTFKg .heading-fold:hover{opacity:1;}/*!sc*/
+.cOTFKg .heading-anchor{box-sizing:border-box;}/*!sc*/
+.cOTFKg .heading-actions{opacity:0;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background:#FFFFFF;margin-left:-26px;-webkit-flex-direction:row;-ms-flex-direction:row;flex-direction:row;display:none;position:relative;top:-2px;width:26px;height:24px;}/*!sc*/
+.cOTFKg .heading-actions:dir(rtl){margin-left:0;margin-right:-26px;}/*!sc*/
+.cOTFKg .heading-actions.collapsed{opacity:1;}/*!sc*/
+.cOTFKg .heading-actions.collapsed .heading-anchor{opacity:0;}/*!sc*/
+.cOTFKg .heading-actions.collapsed .heading-fold{opacity:1;}/*!sc*/
+.cOTFKg h1:hover .heading-anchor,.cOTFKg h2:hover .heading-anchor,.cOTFKg h3:hover .heading-anchor,.cOTFKg h4:hover .heading-anchor,.cOTFKg h5:hover .heading-anchor,.cOTFKg h6:hover .heading-anchor{opacity:0.75 !important;}/*!sc*/
+.cOTFKg h1:hover .heading-anchor:hover,.cOTFKg h2:hover .heading-anchor:hover,.cOTFKg h3:hover .heading-anchor:hover,.cOTFKg h4:hover .heading-anchor:hover,.cOTFKg h5:hover .heading-anchor:hover,.cOTFKg h6:hover .heading-anchor:hover{opacity:1 !important;}/*!sc*/
+.cOTFKg .ProseMirror > h1 .heading-actions,.cOTFKg .ProseMirror > h2 .heading-actions,.cOTFKg .ProseMirror > h3 .heading-actions,.cOTFKg .ProseMirror > h4 .heading-actions,.cOTFKg .ProseMirror > h5 .heading-actions,.cOTFKg .ProseMirror > h6 .heading-actions{display:-webkit-inline-box;display:-webkit-inline-flex;display:-ms-inline-flexbox;display:inline-flex;}/*!sc*/
+.cOTFKg .ProseMirror > h1:not(.placeholder)::before,.cOTFKg .ProseMirror > h2:not(.placeholder)::before,.cOTFKg .ProseMirror > h3:not(.placeholder)::before,.cOTFKg .ProseMirror > h4:not(.placeholder)::before,.cOTFKg .ProseMirror > h5:not(.placeholder)::before,.cOTFKg .ProseMirror > h6:not(.placeholder)::before{display:inline-block;}/*!sc*/
+.cOTFKg .heading-fold{display:inline-block;-webkit-transform-origin:center;-ms-transform-origin:center;transform-origin:center;padding:0;}/*!sc*/
+.cOTFKg .heading-fold.collapsed{-webkit-transition-delay:0.1s;transition-delay:0.1s;opacity:1;}/*!sc*/
+.cOTFKg .heading-fold.collapsed svg{-webkit-transform:rotate(-90deg);-ms-transform:rotate(-90deg);transform:rotate(-90deg);pointer-events:none;}/*!sc*/
+.cOTFKg .heading-fold:dir(rtl).collapsed svg{-webkit-transform:rotate(90deg);-ms-transform:rotate(90deg);transform:rotate(90deg);}/*!sc*/
+.cOTFKg .placeholder::before{display:block;opacity:0;-webkit-transition:opacity 150ms ease-in-out;transition:opacity 150ms ease-in-out;content:attr(data-empty-text);pointer-events:none;height:0;color:#a2b2c3;}/*!sc*/
+.cOTFKg .ProseMirror-focused .placeholder::before,.cOTFKg .placeholder:nth-child(1)::before,.cOTFKg .placeholder:nth-child(2)::before{opacity:1;}/*!sc*/
+.cOTFKg .comment-marker:not([data-resolved]):not([data-draft]),.cOTFKg .comment-marker[data-draft][data-user-id=""]{border-bottom:2px solid rgba(43,194,255,0.5);-webkit-transition:background 100ms ease-in-out;transition:background 100ms ease-in-out;border-radius:2px;}/*!sc*/
+.cOTFKg .comment-marker:not([data-resolved]):not([data-draft]):hover,.cOTFKg .comment-marker[data-draft][data-user-id=""]:hover{background:rgba(43,194,255,0.5);}/*!sc*/
+.cOTFKg .notice-block{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-align-items:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;background:rgba(54,51,255,0.1);border-left:4px solid #3633FF;color:#111319;border-radius:4px;padding:8px 10px 8px 8px;margin:8px 0;}/*!sc*/
+.cOTFKg .notice-block a{color:#111319;-webkit-text-decoration:underline;text-decoration:underline;}/*!sc*/
+.cOTFKg .notice-block p:first-child{margin-top:0;}/*!sc*/
+.cOTFKg .notice-block p:last-child{margin-bottom:0;}/*!sc*/
+.cOTFKg .notice-block .content{-webkit-box-flex:1;-webkit-flex-grow:1;-ms-flex-positive:1;flex-grow:1;min-width:0;}/*!sc*/
+.cOTFKg .notice-block .icon{width:24px;height:24px;-webkit-align-self:flex-start;-ms-flex-item-align:start;align-self:flex-start;margin-right:4px;color:#3633FF;}/*!sc*/
+.cOTFKg .notice-block:dir(rtl) .icon{margin-right:0;margin-left:4px;}/*!sc*/
+.cOTFKg .notice-block.tip{background:rgba(245,190,49,0.1);border-left:4px solid #F5BE31;color:#111319;}/*!sc*/
+.cOTFKg .notice-block.tip .icon{color:#F5BE31;}/*!sc*/
+.cOTFKg .notice-block.tip a{color:#111319;}/*!sc*/
+.cOTFKg .notice-block.warning{background:rgba(215,58,73,0.1);border-left:4px solid #d73a49;color:#111319;}/*!sc*/
+.cOTFKg .notice-block.warning .icon{color:#d73a49;}/*!sc*/
+.cOTFKg .notice-block.warning a{color:#111319;}/*!sc*/
+.cOTFKg .notice-block.success{background:rgba(58,217,132,0.1);border-left:4px solid #3ad984;color:#111319;}/*!sc*/
+.cOTFKg .notice-block.success .icon{color:#3ad984;}/*!sc*/
+.cOTFKg .notice-block.success a{color:#111319;}/*!sc*/
+.cOTFKg blockquote{margin:0;padding:8px 10px 8px 1.5em;overflow:hidden;position:relative;}/*!sc*/
+.cOTFKg blockquote::before{content:"";display:inline-block;width:2px;border-radius:1px;position:absolute;margin-left:-1.5em;top:0;bottom:0;background:#DAE1E9;}/*!sc*/
+.cOTFKg blockquote:dir(rtl)::before{margin-left:0;margin-right:-1.5em;}/*!sc*/
+.cOTFKg b,.cOTFKg strong{font-weight:600;}/*!sc*/
+.cOTFKg .template-placeholder{color:#a2b2c3;border-bottom:1px dotted #a2b2c3;border-radius:2px;cursor:text;}/*!sc*/
+.cOTFKg .template-placeholder:hover{border-bottom:1px dotted #394351;}/*!sc*/
+.cOTFKg p{margin:0;min-height:1.6em;}/*!sc*/
+.cOTFKg .heading-content a,.cOTFKg p a{color:#111319;-webkit-text-decoration:underline;text-decoration:underline;-webkit-text-decoration-color:#808aa9;text-decoration-color:#808aa9;-webkit-text-decoration-thickness:1px;text-decoration-thickness:1px;text-underline-offset:.15em;font-weight:500;}/*!sc*/
+.cOTFKg .heading-content a:hover,.cOTFKg p a:hover{-webkit-text-decoration:underline;text-decoration:underline;-webkit-text-decoration-color:#111319;text-decoration-color:#111319;-webkit-text-decoration-thickness:1px;text-decoration-thickness:1px;}/*!sc*/
+.cOTFKg a{color:#0366d6;cursor:pointer;}/*!sc*/
+.cOTFKg .ProseMirror-focused a{cursor:text;}/*!sc*/
+.cOTFKg a:hover{-webkit-text-decoration:none;text-decoration:none;}/*!sc*/
+.cOTFKg ul,.cOTFKg ol{margin:0 0.1em 0 -26px;padding:0 0 0 48px;}/*!sc*/
+.cOTFKg ul:dir(rtl),.cOTFKg ol:dir(rtl){margin:0 -26px 0 0.1em;padding:0 48px 0 0;}/*!sc*/
+.cOTFKg ol ol{list-style:lower-alpha;}/*!sc*/
+.cOTFKg ol ol ol{list-style:lower-roman;}/*!sc*/
+.cOTFKg ul.checkbox_list{padding:0;margin-left:-24px;margin-right:0;}/*!sc*/
+.cOTFKg ul.checkbox_list:dir(rtl){margin-left:0;margin-right:-24px;}/*!sc*/
+.cOTFKg ul li,.cOTFKg ol li{position:relative;white-space:initial;}/*!sc*/
+.cOTFKg ul li p,.cOTFKg ol li p{white-space:pre-wrap;}/*!sc*/
+.cOTFKg ul li > div,.cOTFKg ol li > div{width:100%;}/*!sc*/
+.cOTFKg ul.checkbox_list > li{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;list-style:none;padding-left:24px;padding-right:0;}/*!sc*/
+.cOTFKg ul.checkbox_list > li:dir(rtl){padding-left:0;padding-right:24px;}/*!sc*/
+.cOTFKg ul.checkbox_list > li.checked > div > p{color:#9BA6B2;}/*!sc*/
+.cOTFKg ul li::before,.cOTFKg ol li::before{background:url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iOCIgeT0iNyIgd2lkdGg9IjMiIGhlaWdodD0iMiIgcng9IjEiIGZpbGw9IiM0RTVDNkUiLz4KPHJlY3QgeD0iOCIgeT0iMTEiIHdpZHRoPSIzIiBoZWlnaHQ9IjIiIHJ4PSIxIiBmaWxsPSIjNEU1QzZFIi8+CjxyZWN0IHg9IjgiIHk9IjE1IiB3aWR0aD0iMyIgaGVpZ2h0PSIyIiByeD0iMSIgZmlsbD0iIzRFNUM2RSIvPgo8cmVjdCB4PSIxMyIgeT0iNyIgd2lkdGg9IjMiIGhlaWdodD0iMiIgcng9IjEiIGZpbGw9IiM0RTVDNkUiLz4KPHJlY3QgeD0iMTMiIHk9IjExIiB3aWR0aD0iMyIgaGVpZ2h0PSIyIiByeD0iMSIgZmlsbD0iIzRFNUM2RSIvPgo8cmVjdCB4PSIxMyIgeT0iMTUiIHdpZHRoPSIzIiBoZWlnaHQ9IjIiIHJ4PSIxIiBmaWxsPSIjNEU1QzZFIi8+Cjwvc3ZnPgo=") no-repeat;background-position:0 2px;content:"";display:inline-block;cursor:-webkit-grab;cursor:-moz-grab;cursor:grab;width:24px;height:24px;position:absolute;left:-40px;opacity:0;-webkit-transition:opacity 200ms ease-in-out;transition:opacity 200ms ease-in-out;}/*!sc*/
+.cOTFKg ul li:dir(rtl)::before,.cOTFKg ol li:dir(rtl)::before{left:auto;right:-40px;}/*!sc*/
+.cOTFKg ul li[draggable=true]::before,.cOTFKg ol li[draggable=true]::before{cursor:-webkit-grabbing;cursor:-moz-grabbing;cursor:grabbing;}/*!sc*/
+.cOTFKg ul > li.counter-2::before,.cOTFKg ol li.counter-2::before{left:-50px;}/*!sc*/
+.cOTFKg ul > li.counter-2:dir(rtl)::before,.cOTFKg ol li.counter-2:dir(rtl)::before{left:auto;right:-50px;}/*!sc*/
+.cOTFKg ul > li.hovering::before,.cOTFKg ol li.hovering::before{opacity:0.5;}/*!sc*/
+.cOTFKg ul li.ProseMirror-selectednode::after,.cOTFKg ol li.ProseMirror-selectednode::after{display:none;}/*!sc*/
+.cOTFKg ul.checkbox_list > li::before{left:0;}/*!sc*/
+.cOTFKg ul.checkbox_list > li:dir(rtl)::before{left:auto;right:0;}/*!sc*/
+.cOTFKg ul.checkbox_list li .checkbox{display:inline-block;cursor:var(--pointer);pointer-events:initial;opacity:1;width:14px;height:14px;position:relative;top:1px;-webkit-transition:-webkit-transform 100ms ease-in-out;-webkit-transition:transform 100ms ease-in-out;transition:transform 100ms ease-in-out;opacity:.8;margin:0 0.5em 0 0;background-image:url("data:image/svg+xml,%3Csvg width='14' height='14' viewBox='0 0 14 14' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M3 0C1.34315 0 0 1.34315 0 3V11C0 12.6569 1.34315 14 3 14H11C12.6569 14 14 12.6569 14 11V3C14 1.34315 12.6569 0 11 0H3ZM3 2C2.44772 2 2 2.44772 2 3V11C2 11.5523 2.44772 12 3 12H11C11.5523 12 12 11.5523 12 11V3C12 2.44772 11.5523 2 11 2H3Z' fill='%23111319' /%3E%3C/svg%3E%0A");}/*!sc*/
+.cOTFKg ul.checkbox_list li .checkbox:dir(rtl){margin:0 0 0 0.5em;}/*!sc*/
+.cOTFKg ul.checkbox_list li .checkbox[aria-checked=true]{opacity:1;background-image:url( "data:image/svg+xml,%3Csvg width='14' height='14' viewBox='0 0 14 14' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M3 0C1.34315 0 0 1.34315 0 3V11C0 12.6569 1.34315 14 3 14H11C12.6569 14 14 12.6569 14 11V3C14 1.34315 12.6569 0 11 0H3ZM4.26825 5.85982L5.95873 7.88839L9.70003 2.9C10.0314 2.45817 10.6582 2.36863 11.1 2.7C11.5419 3.03137 11.6314 3.65817 11.3 4.1L6.80002 10.1C6.41275 10.6164 5.64501 10.636 5.2318 10.1402L2.7318 7.14018C2.37824 6.71591 2.43556 6.08534 2.85984 5.73178C3.28412 5.37821 3.91468 5.43554 4.26825 5.85982Z' fill='%230366d6' /%3E%3C/svg%3E%0A" );}/*!sc*/
+.cOTFKg ul.checkbox_list li .checkbox:active{-webkit-transform:scale(0.9);-ms-transform:scale(0.9);transform:scale(0.9);}/*!sc*/
+.cOTFKg li p:first-child{margin:0;word-break:break-word;}/*!sc*/
+.cOTFKg hr{position:relative;height:1em;border:0;}/*!sc*/
+.cOTFKg hr::before{content:"";display:block;position:absolute;border-top:1px solid #E8EBED;top:0.5em;left:0;right:0;}/*!sc*/
+.cOTFKg hr.page-break{page-break-after:always;}/*!sc*/
+.cOTFKg hr.page-break::before{border-top:1px dashed #E8EBED;}/*!sc*/
+.cOTFKg .math-inline .math-src .ProseMirror,.cOTFKg code{border-radius:4px;border:1px solid #E8EBED;background:#F4F7FA;padding:3px 4px;color:#032f62;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,Courier,monospace;font-size:80%;}/*!sc*/
+.cOTFKg mark{border-radius:1px;color:#111319;}/*!sc*/
+.cOTFKg mark a{color:#111319;}/*!sc*/
+.cOTFKg .external-link{cursor:pointer;display:inline-block;position:relative;top:2px;width:16px;height:16px;}/*!sc*/
+.cOTFKg .code-block{position:relative;}/*!sc*/
+.cOTFKg .code-block[data-language=mermaidjs]{margin:0.75em 0;}/*!sc*/
+.cOTFKg .code-block[data-language=mermaidjs]:not(.code-active){height:auto;margin:-0.75em 0;overflow:hidden;position:relative;}/*!sc*/
+.cOTFKg .ProseMirror[contenteditable="false"] .code-block[data-language=mermaidjs]{height:auto;margin:-0.5em 0;overflow:hidden;}/*!sc*/
+.cOTFKg .code-block.with-line-numbers pre{padding-left:calc(var(--line-number-gutter-width,0) * 1em + 1.5em);}/*!sc*/
+.cOTFKg .code-block.with-line-numbers::after{content:attr(data-line-numbers);position:absolute;padding-left:0.5em;left:1px;top:calc(1px + 0.75em);width:calc(var(--line-number-gutter-width,0) * 1em + .25em);word-break:break-all;white-space:break-spaces;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,Courier,monospace;font-size:13px;line-height:1.4em;color:#9BA6B2;background:#F4F7FA;text-align:right;font-variant-numeric:tabular-nums;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}/*!sc*/
+.cOTFKg .mermaid-diagram-wrapper{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-align-items:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-webkit-justify-content:center;-ms-flex-pack:center;justify-content:center;margin:0.75em 0;min-height:1.6em;background:#F4F7FA;border-radius:6px;border:1px solid #E8EBED;padding:8px;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;cursor:default;}/*!sc*/
+.cOTFKg .mermaid-diagram-wrapper *{font-family:-apple-system,BlinkMacSystemFont,Inter,'Segoe UI',Roboto,Oxygen,sans-serif;}/*!sc*/
+.cOTFKg .mermaid-diagram-wrapper.empty{font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,Courier,monospace;font-size:14px;color:#a2b2c3;}/*!sc*/
+.cOTFKg .mermaid-diagram-wrapper.parse-error{font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,Courier,monospace;font-size:14px;color:#FF5C80;}/*!sc*/
+.cOTFKg pre{display:block;overflow-x:auto;padding:0.75em 1em;line-height:1.4em;position:relative;background:#F4F7FA;border-radius:4px;border:1px solid #E8EBED;margin:.5em 0;-webkit-font-smoothing:initial;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,Courier,monospace;font-size:13px;direction:ltr;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none;color:#2F3336;}/*!sc*/
+.cOTFKg pre code{font-size:13px;background:none;padding:0;border:0;}/*!sc*/
+.cOTFKg table{width:100%;border-collapse:collapse;border-radius:4px;margin-top:1em;box-sizing:border-box;}/*!sc*/
+.cOTFKg table *{box-sizing:border-box;}/*!sc*/
+.cOTFKg table tr{position:relative;border-bottom:1px solid #DAE1E9;}/*!sc*/
+.cOTFKg table td,.cOTFKg table th{position:relative;vertical-align:top;border:1px solid #DAE1E9;position:relative;padding:4px 8px;text-align:left;min-width:100px;font-weight:normal;}/*!sc*/
+.cOTFKg table td:dir(rtl),.cOTFKg table th:dir(rtl){text-align:right;}/*!sc*/
+.cOTFKg table th{background:rgba(218,225,233,0.25);color:#394351;font-weight:500;}/*!sc*/
+.cOTFKg table td .component-embed{padding:4px 0;}/*!sc*/
+.cOTFKg table .selectedCell{background:rgba(3,102,214,0.1);background-clip:padding-box;}/*!sc*/
+@media print{.cOTFKg table .table-add-row,.cOTFKg table .table-add-column,.cOTFKg table .table-grip,.cOTFKg table .table-grip-column,.cOTFKg table .table-grip-row{display:none;}}/*!sc*/
+.cOTFKg table .table-add-row,.cOTFKg table .table-add-column{display:block;position:absolute;background:#0366d6;cursor:var(--pointer);}/*!sc*/
+.cOTFKg table .table-add-row:hover::after,.cOTFKg table .table-add-column:hover::after{width:16px;height:16px;z-index:20;background-color:#0366d6;background-size:16px 16px;background-position:50% 50%;background-image:url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTEyIDVDMTEuNDQ3NyA1IDExIDUuNDQ3NzIgMTEgNlYxMUg2QzUuNDQ3NzIgMTEgNSAxMS40NDc3IDUgMTJDNSAxMi41NTIzIDUuNDQ3NzIgMTMgNiAxM0gxMVYxOEMxMSAxOC41NTIzIDExLjQ0NzcgMTkgMTIgMTlDMTIuNTUyMyAxOSAxMyAxOC41NTIzIDEzIDE4VjEzSDE4QzE4LjU1MjMgMTMgMTkgMTIuNTUyMyAxOSAxMkMxOSAxMS40NDc3IDE4LjU1MjMgMTEgMTggMTFIMTNWNkMxMyA1LjQ0NzcyIDEyLjU1MjMgNSAxMiA1WiIgZmlsbD0id2hpdGUiLz48L3N2Zz4=");}/*!sc*/
+.cOTFKg table .table-add-row::before,.cOTFKg table .table-add-column::before{content:"";display:block;cursor:var(--pointer);position:absolute;width:24px;height:24px;}/*!sc*/
+.cOTFKg table .table-add-row{bottom:-1px;left:-16px;width:0;height:2px;}/*!sc*/
+.cOTFKg table .table-add-row::after{content:"";position:absolute;bottom:-1px;left:-10px;width:4px;height:4px;display:block;border-radius:100%;background-color:#DAE1E9;}/*!sc*/
+.cOTFKg table .table-add-row:hover{width:calc(var(--table-width) - 48px);}/*!sc*/
+.cOTFKg table .table-add-row:hover::after{bottom:-7.5px;left:-16px;}/*!sc*/
+.cOTFKg table .table-add-row::before{bottom:-12px;left:-18px;}/*!sc*/
+.cOTFKg table .table-add-row.first{bottom:auto;top:-1px;}/*!sc*/
+.cOTFKg table .table-add-row.first::before{bottom:auto;top:-12px;}/*!sc*/
+.cOTFKg table .table-add-column{top:-16px;right:-1px;width:2px;height:0;}/*!sc*/
+.cOTFKg table .table-add-column::after{content:"";position:absolute;top:-10px;right:-1px;width:4px;height:4px;display:block;border-radius:100%;background-color:#DAE1E9;}/*!sc*/
+.cOTFKg table .table-add-column:hover{height:calc(var(--table-height) - 32px + 6px);}/*!sc*/
+.cOTFKg table .table-add-column:hover::after{top:-16px;right:-7px;}/*!sc*/
+.cOTFKg table .table-add-column::before{top:-16px;right:-12px;}/*!sc*/
+.cOTFKg table .table-add-column.first{right:auto;left:-1px;}/*!sc*/
+.cOTFKg table .table-add-column.first::before{right:auto;left:-12px;}/*!sc*/
+.cOTFKg table .table-grip-column::after{content:"";cursor:var(--pointer);position:absolute;top:-16px;left:0;width:100%;height:12px;background:#DAE1E9;display:block;}/*!sc*/
+.cOTFKg table .table-grip-column:hover::after{background:#111319;}/*!sc*/
+.cOTFKg table .table-grip-column.first::after{border-top-left-radius:3px;border-bottom-left-radius:3px;}/*!sc*/
+.cOTFKg table .table-grip-column.last::after{border-top-right-radius:3px;border-bottom-right-radius:3px;}/*!sc*/
+.cOTFKg table .table-grip-column.selected::after{background:#0366d6;}/*!sc*/
+.cOTFKg table .table-grip-row::after{content:"";cursor:var(--pointer);position:absolute;left:-16px;top:0;height:100%;width:12px;background:#DAE1E9;border-color:#FFFFFF;display:block;}/*!sc*/
+.cOTFKg table .table-grip-row:hover::after{background:#111319;}/*!sc*/
+.cOTFKg table .table-grip-row.first::after{border-top-left-radius:3px;border-top-right-radius:3px;}/*!sc*/
+.cOTFKg table .table-grip-row.last::after{border-bottom-left-radius:3px;border-bottom-right-radius:3px;}/*!sc*/
+.cOTFKg table .table-grip-row.selected::after{background:#0366d6;}/*!sc*/
+.cOTFKg table .table-grip::after{content:"";cursor:var(--pointer);background:#DAE1E9;width:13px;height:13px;border-radius:13px;border:2px solid #FFFFFF;position:absolute;top:-18px;left:-18px;display:block;z-index:10;}/*!sc*/
+.cOTFKg table .table-grip:hover::after{background:#111319;}/*!sc*/
+.cOTFKg table .table-grip.selected::after{background:#0366d6;}/*!sc*/
+.cOTFKg .table-wrapper{position:relative;}/*!sc*/
+.cOTFKg .table-scrollable{position:relative;margin:-1em -32px -0.5em;-webkit-scrollbar-width:thin;-moz-scrollbar-width:thin;-ms-scrollbar-width:thin;scrollbar-width:thin;-webkit-scrollbar-color:transparent transparent;-moz-scrollbar-color:transparent transparent;-ms-scrollbar-color:transparent transparent;scrollbar-color:transparent transparent;overflow-y:hidden;overflow-x:auto;padding-top:1em;padding-bottom:.5em;padding-left:32px;padding-right:32px;-webkit-transition:border 250ms ease-in-out 0s;transition:border 250ms ease-in-out 0s;}/*!sc*/
+.cOTFKg .table-scrollable:hover{-webkit-scrollbar-color:#bdc6cb #F4F7FA;-moz-scrollbar-color:#bdc6cb #F4F7FA;-ms-scrollbar-color:#bdc6cb #F4F7FA;scrollbar-color:#bdc6cb #F4F7FA;}/*!sc*/
+.cOTFKg .table-scrollable ::-webkit-scrollbar{height:14px;background-color:transparent;}/*!sc*/
+.cOTFKg .table-scrollable:hover ::-webkit-scrollbar{background-color:#F4F7FA;}/*!sc*/
+.cOTFKg .table-scrollable ::-webkit-scrollbar-thumb{background-color:transparent;border:3px solid transparent;border-radius:7px;}/*!sc*/
+.cOTFKg .table-scrollable:hover ::-webkit-scrollbar-thumb{background-color:#bdc6cb;border-color:#F4F7FA;}/*!sc*/
+.cOTFKg .table-shadow-left::before,.cOTFKg .table-shadow-right::after{content:"";position:absolute;top:1px;bottom:0;left:-1em;width:32px;z-index:20;-webkit-transition:box-shadow 250ms ease-in-out;transition:box-shadow 250ms ease-in-out;border:0px solid transparent;pointer-events:none;}/*!sc*/
+.cOTFKg .table-shadow-left::before{left:-32px;right:auto;box-shadow:16px 0 16px -16px inset rgba(0,0,0,0.25);border-left:32px solid #FFFFFF;}/*!sc*/
+.cOTFKg .table-shadow-right::after{right:-32px;left:auto;box-shadow:-16px 0 16px -16px inset rgba(0,0,0,0.25);border-right:32px solid #FFFFFF;}/*!sc*/
+.cOTFKg .block-menu-trigger{opacity:0;pointer-events:none;display:inline;width:24px;height:24px;color:#394351;background:none;position:absolute;-webkit-transition:color 150ms cubic-bezier(0.175,0.885,0.32,1.275), opacity 150ms ease-in-out;transition:color 150ms cubic-bezier(0.175,0.885,0.32,1.275), opacity 150ms ease-in-out;outline:none;border:0;padding:0;margin-top:1px;margin-left:-28px;border-radius:4px;}/*!sc*/
+.cOTFKg .block-menu-trigger:hover,.cOTFKg .block-menu-trigger:focus{cursor:var(--pointer);color:#111319;background:#EDF2F7;}/*!sc*/
+.cOTFKg .ProseMirror[contenteditable="true"]:focus-within,.cOTFKg .ProseMirror-focused .block-menu-trigger,.cOTFKg .block-menu-trigger:active,.cOTFKg .block-menu-trigger:focus{opacity:1;pointer-events:initial;}/*!sc*/
+.cOTFKg .ProseMirror-gapcursor{display:none;pointer-events:none;position:absolute;}/*!sc*/
+.cOTFKg .ProseMirror-gapcursor::after{content:"";display:block;position:absolute;top:-2px;width:20px;border-top:1px solid #111319;-webkit-animation:ProseMirror-cursor-blink 1.1s steps(2,start) infinite;animation:ProseMirror-cursor-blink 1.1s steps(2,start) infinite;}/*!sc*/
+.cOTFKg .folded-content,.cOTFKg .folded-content + .mermaid-diagram-wrapper{display:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}/*!sc*/
+@-webkit-keyframes ProseMirror-cursor-blink{to{visibility:hidden;}}/*!sc*/
+@keyframes ProseMirror-cursor-blink{to{visibility:hidden;}}/*!sc*/
+.cOTFKg .ProseMirror-focused .ProseMirror-gapcursor{display:block;}/*!sc*/
+.cOTFKg del{color:#9BA6B2;-webkit-text-decoration:strikethrough;text-decoration:strikethrough;}/*!sc*/
+.cOTFKg ins[data-operation-index]{color:#111319;background-color:rgba(18,138,41,0.16);-webkit-text-decoration:none;text-decoration:none;}/*!sc*/
+.cOTFKg del[data-operation-index]{color:#394351;background-color:#ffebe9;-webkit-text-decoration:none;text-decoration:none;}/*!sc*/
+.cOTFKg del[data-operation-index] img{opacity:.5;}/*!sc*/
+@media print{.cOTFKg .placeholder::before,.cOTFKg .block-menu-trigger,.cOTFKg .heading-actions,.cOTFKg button.show-source-button,.cOTFKg h1:not(.placeholder)::before,.cOTFKg h2:not(.placeholder)::before,.cOTFKg h3:not(.placeholder)::before,.cOTFKg h4:not(.placeholder)::before,.cOTFKg h5:not(.placeholder)::before,.cOTFKg h6:not(.placeholder)::before{display:none;}.cOTFKg .image{page-break-inside:avoid;}.cOTFKg .comment-marker{border:0;background:none;}.cOTFKg .page-break{opacity:0;}.cOTFKg pre{overflow-x:hidden;white-space:pre-wrap;}.cOTFKg em,.cOTFKg blockquote{font-family:"SF Pro Text",-apple-system,BlinkMacSystemFont,Inter,'Segoe UI',Roboto,Oxygen,sans-serif;}}/*!sc*/
+.cOTFKg .math-node{min-width:1em;min-height:1em;font-size:0.95em;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,Courier,monospace;cursor:auto;}/*!sc*/
+.cOTFKg .math-node.empty-math .math-render::before{content:"Empty math";color:#a2b2c3;font-size:14px;}/*!sc*/
+.cOTFKg .math-node .math-render.parse-error::before{content:"(math error)";color:#FF5C80;cursor:help;}/*!sc*/
+.cOTFKg .math-node.ProseMirror-selectednode{outline:none;}/*!sc*/
+.cOTFKg .math-node .math-src{display:none;color:#22a2c9;tab-size:4;}/*!sc*/
+.cOTFKg .math-node.ProseMirror-selectednode .math-src{display:inline;}/*!sc*/
+.cOTFKg .math-node.ProseMirror-selectednode .math-render{display:none;}/*!sc*/
+.cOTFKg math-inline{display:inline;white-space:nowrap;}/*!sc*/
+.cOTFKg math-inline .math-render{display:inline-block;font-size:0.85em;}/*!sc*/
+.cOTFKg math-inline .math-src .ProseMirror{display:inline;margin:0px 3px;}/*!sc*/
+.cOTFKg math-block{display:block;}/*!sc*/
+.cOTFKg math-block .math-render{display:block;}/*!sc*/
+.cOTFKg math-block.ProseMirror-selectednode,.cOTFKg math-block.empty-math{border-radius:4px;border:1px solid #E8EBED;background:#F4F7FA;padding:0.75em 1em;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,Courier,monospace;font-size:80%;}/*!sc*/
+.cOTFKg math-block.empty-math{text-align:center;}/*!sc*/
+.cOTFKg math-block .math-src .ProseMirror{width:100%;display:block;}/*!sc*/
+.cOTFKg math-block .katex-display{margin:0;}/*!sc*/
+.cOTFKg .katex-html *::selection{background-color:none !important;}/*!sc*/
+.cOTFKg .math-node.math-select .math-render{background-color:#c0c0c0ff;}/*!sc*/
+.cOTFKg math-inline.math-select .math-render{padding-top:2px;}/*!sc*/
+.cOTFKg .no-cursor{caret-color:transparent;}/*!sc*/
+.cOTFKg div:focus .fake-cursor,.cOTFKg span:focus .fake-cursor{margin-right:-1px;border-left-width:1px;border-left-style:solid;-webkit-animation:ProseMirror-cursor-blink 1.1s steps(2,start) infinite;animation:ProseMirror-cursor-blink 1.1s steps(2,start) infinite;position:relative;z-index:1;}/*!sc*/
+.cOTFKg .token.comment,.cOTFKg .token.prolog,.cOTFKg .token.doctype,.cOTFKg .token.cdata{color:#6a737d;}/*!sc*/
+.cOTFKg .token.punctuation{color:#5e6687;}/*!sc*/
+.cOTFKg .token.namespace{opacity:0.7;}/*!sc*/
+.cOTFKg .token.operator,.cOTFKg .token.boolean,.cOTFKg .token.number{color:#d73a49;}/*!sc*/
+.cOTFKg .token.property{color:#c08b30;}/*!sc*/
+.cOTFKg .token.tag{color:#3d8fd1;}/*!sc*/
+.cOTFKg .token.string{color:#032f62;}/*!sc*/
+.cOTFKg .token.selector{color:#6679cc;}/*!sc*/
+.cOTFKg .token.attr-name{color:#c76b29;}/*!sc*/
+.cOTFKg .token.entity,.cOTFKg .token.url,.cOTFKg .language-css .token.string,.cOTFKg .style .token.string{color:#22a2c9;}/*!sc*/
+.cOTFKg .token.attr-value,.cOTFKg .token.keyword,.cOTFKg .token.control,.cOTFKg .token.directive,.cOTFKg .token.unit{color:#d73a49;}/*!sc*/
+.cOTFKg .token.function,.cOTFKg .token.class-name-definition{color:#6f42c1;}/*!sc*/
+.cOTFKg .token.class-name{color:#3d8fd1;}/*!sc*/
+.cOTFKg .token.statement,.cOTFKg .token.regex,.cOTFKg .token.atrule{color:#22a2c9;}/*!sc*/
+.cOTFKg .token.placeholder,.cOTFKg .token.variable{color:#3d8fd1;}/*!sc*/
+.cOTFKg .token.deleted{-webkit-text-decoration:line-through;text-decoration:line-through;}/*!sc*/
+.cOTFKg .token.inserted{border-bottom:1px dotted #202746;-webkit-text-decoration:none;text-decoration:none;}/*!sc*/
+.cOTFKg .token.italic{font-style:italic;}/*!sc*/
+.cOTFKg .token.important,.cOTFKg .token.bold{font-weight:bold;}/*!sc*/
+.cOTFKg .token.important{color:#c94922;}/*!sc*/
+.cOTFKg .token.entity{cursor:help;}/*!sc*/
+.cOTFKg .find-result{background:rgba(255,213,0,0.25);}/*!sc*/
+.cOTFKg .find-result.current-result{background:rgba(255,213,0,0.75);-webkit-animation:iWoRBt 150ms 1;animation:iWoRBt 150ms 1;}/*!sc*/
+.cOTFKg .attachment{display:block;color:#111319 !important;box-shadow:0 0 0 1px #DAE1E9;white-space:nowrap;border-radius:8px;padding:6px 8px;}/*!sc*/
+.cOTFKg .image > img{width:auto;height:auto;}/*!sc*/
+data-styled.g30[id="sc-hmdomO"]{content:"cOTFKg,"}/*!sc*/
+html{line-height:1.15;-webkit-text-size-adjust:100%;}/*!sc*/
+body{margin:0;}/*!sc*/
+main{display:block;}/*!sc*/
+h1{font-size:2em;margin:0.67em 0;}/*!sc*/
+hr{box-sizing:content-box;height:0;overflow:visible;}/*!sc*/
+pre{font-family:monospace,monospace;font-size:1em;}/*!sc*/
+a{background-color:transparent;}/*!sc*/
+abbr[title]{border-bottom:none;-webkit-text-decoration:underline;text-decoration:underline;-webkit-text-decoration:underline dotted;text-decoration:underline dotted;}/*!sc*/
+b,strong{font-weight:bolder;}/*!sc*/
+code,kbd,samp{font-family:monospace,monospace;font-size:1em;}/*!sc*/
+small{font-size:80%;}/*!sc*/
+sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline;}/*!sc*/
+sub{bottom:-0.25em;}/*!sc*/
+sup{top:-0.5em;}/*!sc*/
+img{border-style:none;}/*!sc*/
+button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;line-height:1.15;margin:0;}/*!sc*/
+button,input{overflow:visible;}/*!sc*/
+button,select{text-transform:none;}/*!sc*/
+button,[type="button"],[type="reset"],[type="submit"]{-webkit-appearance:button;}/*!sc*/
+button::-moz-focus-inner,[type="button"]::-moz-focus-inner,[type="reset"]::-moz-focus-inner,[type="submit"]::-moz-focus-inner{border-style:none;padding:0;}/*!sc*/
+button:-moz-focusring,[type="button"]:-moz-focusring,[type="reset"]:-moz-focusring,[type="submit"]:-moz-focusring{outline:1px dotted ButtonText;}/*!sc*/
+fieldset{padding:0.35em 0.75em 0.625em;}/*!sc*/
+legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal;}/*!sc*/
+progress{vertical-align:baseline;}/*!sc*/
+textarea{overflow:auto;}/*!sc*/
+[type="checkbox"],[type="radio"]{box-sizing:border-box;padding:0;}/*!sc*/
+[type="number"]::-webkit-inner-spin-button,[type="number"]::-webkit-outer-spin-button{height:auto;}/*!sc*/
+[type="search"]{-webkit-appearance:textfield;outline-offset:-2px;}/*!sc*/
+[type="search"]::-webkit-search-decoration{-webkit-appearance:none;}/*!sc*/
+::-webkit-file-upload-button{-webkit-appearance:button;font:inherit;}/*!sc*/
+details{display:block;}/*!sc*/
+summary{display:list-item;}/*!sc*/
+template{display:none;}/*!sc*/
+[hidden]{display:none;}/*!sc*/
+*{box-sizing:border-box;}/*!sc*/
+html,body{width:100%;margin:0;padding:0;print-color-adjust:exact;-webkit-print-color-adjust:exact;--pointer:default;overscroll-behavior-x:none;}/*!sc*/
+body,button,input,optgroup,select,textarea{font-family:-apple-system,BlinkMacSystemFont,Inter,'Segoe UI',Roboto,Oxygen,sans-serif;}/*!sc*/
+body{font-size:16px;line-height:1.5;color:#111319;overscroll-behavior-y:none;-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}/*!sc*/
+@media (min-width:737px){html,body{min-height:0;}}/*!sc*/
+@media (min-width:737px) and (display-mode:standalone){body:after{content:"";display:block;position:fixed;top:0;left:0;right:0;height:1px;background:#DAE1E9;z-index:10000;}}/*!sc*/
+a{color:#0366d6;-webkit-text-decoration:none;text-decoration:none;cursor:pointer;}/*!sc*/
+h1,h2,h3,h4,h5,h6{font-weight:500;line-height:1.25;margin-top:1em;margin-bottom:0.5em;}/*!sc*/
+h1{font-size:36px;}/*!sc*/
+h2{font-size:26px;}/*!sc*/
+h3{font-size:20px;}/*!sc*/
+h4{font-size:18px;}/*!sc*/
+h5{font-size:16px;}/*!sc*/
+p,dl,ol,ul,pre,blockquote{margin-top:1em;margin-bottom:1em;}/*!sc*/
+hr{border:0;height:0;border-top:1px solid #DAE1E9;}/*!sc*/
+:focus-visible{outline-color:#0366d6;outline-offset:-1px;outline-width:initial;}/*!sc*/
+data-styled.g32[id="sc-global-iOtxnx1"]{content:"sc-global-iOtxnx1,"}/*!sc*/
+@-webkit-keyframes hUniol{from{opacity:0;}to{opacity:1;}}/*!sc*/
+@keyframes hUniol{from{opacity:0;}to{opacity:1;}}/*!sc*/
+data-styled.g33[id="sc-keyframes-hUniol"]{content:"hUniol,"}/*!sc*/
+@-webkit-keyframes iWoRBt{0%{box-shadow:0 0 0 1px rgba(255,213,0,0.75);}50%{box-shadow:0 0 0 4px rgba(255,213,0,0.75);}100%{box-shadow:0 0 0 1px rgba(255,213,0,0.75);}}/*!sc*/
+@keyframes iWoRBt{0%{box-shadow:0 0 0 1px rgba(255,213,0,0.75);}50%{box-shadow:0 0 0 4px rgba(255,213,0,0.75);}100%{box-shadow:0 0 0 1px rgba(255,213,0,0.75);}}/*!sc*/
+data-styled.g34[id="sc-keyframes-iWoRBt"]{content:"iWoRBt,"}/*!sc*/
+.fyrFtf{max-width:46em;margin:0 auto;padding:0 1em;}/*!sc*/
+data-styled.g35[id="sc-bXCLTC"]{content:"fyrFtf,"}/*!sc*/
+</style></head><body><article class="sc-bXCLTC fyrFtf"><h1 dir="ltr">IAAA Competition 2026: Brain CT Triage Challenge</h1><div dir="ltr" class="sc-hmdomO cOTFKg"><div id="content" class="ProseMirror"><h1 dir="auto"><span contenteditable="false" class="heading-actions "></span><span class="heading-content">Brain CT Triage Challenge</span></h1><h2 dir="auto"><span contenteditable="false" class="heading-actions "></span><span class="heading-content">Overview</span></h2><p dir="auto">In this challenge, you will develop models that perform <strong>clinically meaningful triage</strong> on non-contrast brain CT scans.</p><p dir="auto">Instead of directly predicting triage classes, your model will predict a set of <strong>intermediate imaging quantities</strong> for each CT study:</p><p dir="auto"></p><ol><li><p dir="auto"><strong>Total volume</strong> (in mL) of each intracranial hemorrhage (ICH) subtype.</p></li><li><p dir="auto"><strong>Probability of any skull fracture.</strong></p></li><li><p dir="auto"><strong>Midline shift (MLS) in mm.</strong></p></li></ol><p dir="auto">A <strong>fixed, clinically motivated rule</strong> (provided as executable Python code) then converts these intermediate values into <strong>triage classes</strong>:</p><ul><li><p dir="auto"><strong>0 – Non-urgent</strong></p></li><li><p dir="auto"><strong>1 – Urgent</strong></p></li><li><p dir="auto"><strong>2 – Critical</strong></p></li></ul><p dir="auto">The <strong>primary evaluation metric</strong> is <strong>Quadratic Weighted Kappa (QWK)</strong> between your model’s triage output and the ground-truth triage. In the event of a <strong>tie in QWK</strong>, we use the <strong>Mean Absolute Error (MAE) of total ICH volume</strong> as a <strong>tie breaker</strong>.</p><p dir="auto">Participants will <strong>not</strong> submit CSV prediction files. Instead, you will submit:</p><ul><li><p dir="auto">Your <strong>model files</strong> (weights, configs, etc.), and</p></li><li><p dir="auto">A <strong>Python module</strong> implementing a standard <strong>Model API</strong>.</p></li></ul><p dir="auto">Our evaluation pipeline will load your code and models and run inference directly on the hidden evaluation set.</p><p dir="auto"></p><h2 dir="auto"><span contenteditable="false" class="heading-actions "></span><span class="heading-content">Problem Description</span></h2><p dir="auto">Non-contrast brain CT is a first-line imaging modality in emergency neuroradiology. Rapid triage is crucial to identify patients who:</p><ul><li><p dir="auto">Need <strong>immediate neurosurgical or neurocritical care</strong> (critical),</p></li><li><p dir="auto">Require <strong>urgent but not emergent</strong> attention (urgent),</p></li><li><p dir="auto">Have <strong>no acute, triage-relevant findings</strong> (non-urgent).</p></li></ul><p dir="auto">Clinically, triage is primarily driven by a small set of <strong>imaging primitives</strong>:</p><ul><li><p dir="auto"><strong>Intracranial hemorrhage burden</strong> (how much blood, and of what type?),</p></li><li><p dir="auto"><strong>Presence of skull fracture</strong>,</p></li><li><p dir="auto"><strong>Degree of midline shift / mass effect</strong>.</p></li></ul><p dir="auto">You will build models that predict these primitives from CT images. A transparent, fixed triage rule converts those primitives to triage classes. This design ensures:</p><ul><li><p dir="auto"><strong>Interpretability</strong> – your model predicts clinically meaningful quantities.</p></li><li><p dir="auto"><strong>Mechanistic behavior</strong> – triage is derived from explicit rules.</p></li><li><p dir="auto"><strong>Fairness / reproducibility</strong> – the same rule is used for both ground truth and predictions.</p></li></ul><p dir="auto"></p><h2 dir="auto"><span contenteditable="false" class="heading-actions "></span><span class="heading-content">Labels and Tasks</span></h2><h3 dir="auto"><span contenteditable="false" class="heading-actions "></span><span class="heading-content">Available annotations (training set)</span></h3><p dir="auto">For each CT <strong>study</strong> in the training set, we provide:</p><ul><li><p dir="auto"><strong>Intracranial hemorrhage (ICH) segmentation masks</strong> Five semantic classes (exact names defined in the Data Profile), typically including:</p><ul><li><p dir="auto">Epidural hemorrhage (<strong>EDH</strong>)</p></li><li><p dir="auto">Subdural hemorrhage (<strong>SDH</strong>)</p></li><li><p dir="auto">Intraparenchymal / intracerebral hemorrhage (<strong>IPH/ICH</strong>)</p></li><li><p dir="auto">Subarachnoid hemorrhage (<strong>SAH</strong>)</p></li><li><p dir="auto">Intraventricular hemorrhage (<strong>IVH</strong>)</p></li></ul><blockquote><p dir="auto">There may be <strong>multiple lesions per ICH subtype</strong>. All instances of a given subtype are included in its mask. The <strong>volume per subtype is defined as the combined volume of all lesions</strong> of that subtype in the study.</p></blockquote></li><li><p dir="auto"><strong>Skull fractures</strong> 2D bounding boxes indicating the locations of skull fractures on each annotated slice.</p></li><li><p dir="auto"><strong>Midline shift keypoints</strong> For slices where midline annotations are provided, three keypoints are stored:</p><ul><li><p dir="auto"><code class="inline" spellcheck="false">"AnteriorFalxAttachment"</code></p></li><li><p dir="auto"><code class="inline" spellcheck="false">"PosteriorFalxAttachment"</code></p></li><li><p dir="auto"><code class="inline" spellcheck="false">"OutermostPointOfTheFalx"</code></p></li></ul><p dir="auto">These keypoints can be used to reconstruct the <strong>midline</strong> and compute slice-wise midline deviation. For the challenge, ground-truth <strong>midline shift at the foramen of Monro level (</strong><code class="inline" spellcheck="false">MLS_mm</code>) is computed from these keypoints and provided as part of the <strong>intermediate ground truth</strong> for each series.</p></li></ul><p dir="auto">These annotations are provided for <strong>training</strong> (and optionally a labeled validation subset). The <strong>test set</strong> includes only the CT images (no segmentation, no keypoints, no fracture boxes).</p><p dir="auto"></p><h2 dir="auto"><span contenteditable="false" class="heading-actions "></span><span class="heading-content">Data Profile &amp; Dataset Structure</span></h2><p dir="auto">The dataset consists of three main components:</p><p dir="auto"></p><ol><li><p dir="auto"><strong>Metadata table</strong> (e.g., CSV or Parquet)</p></li><li><p dir="auto"><strong>Raw DICOM data</strong></p></li><li><p dir="auto"><strong>Annotation JSON files</strong></p></li></ol><h3 dir="auto"><span contenteditable="false" class="heading-actions "></span><span class="heading-content">1. Metadata</span></h3><p dir="auto">A metadata file is provided (for example <code class="inline" spellcheck="false">metadata.csv</code> or <code class="inline" spellcheck="false">metadata.parquet</code>) that contains:</p><ul><li><p dir="auto"><strong>DICOM-level information</strong> (e.g., <code class="inline" spellcheck="false">dicom_series.id</code>, number of slices, acquisition parameters, etc.).</p></li><li><p dir="auto"><strong>Aggregated labels</strong> derived from per-slice annotations and keypoints, including:</p><ul><li><p dir="auto">Series-level ICH volumes per subtype:</p><ul><li><p dir="auto"><code class="inline" spellcheck="false">V_EDH</code>, <code class="inline" spellcheck="false">V_SDH</code>, <code class="inline" spellcheck="false">V_IPH</code>, <code class="inline" spellcheck="false">V_SAH</code>, <code class="inline" spellcheck="false">V_IVH</code> (mL)</p></li></ul></li><li><p dir="auto">Series-level midline shift:</p><ul><li><p dir="auto"><code class="inline" spellcheck="false">MLS_mm</code> (mm at the foramen of Monro level)</p></li></ul></li><li><p dir="auto">Series-level fracture presence:</p><ul><li><p dir="auto"><code class="inline" spellcheck="false">SkullFracture</code> (boolean) or fracture count, which maps to <code class="inline" spellcheck="false">fracture_prob</code> = 0 or 1 in the intermediate schema.</p></li></ul></li><li><p dir="auto">Optional triage labels for the training set (for debugging).</p></li></ul></li></ul><p dir="auto">This metadata is primarily for <strong>training</strong> and quality control; the <strong>official triage labels</strong> are always derived via <code class="inline" spellcheck="false">triage_from_intermediates</code> from the intermediate primitives.</p><h3 dir="auto"><span contenteditable="false" class="heading-actions "></span><span class="heading-content">2. Raw DICOM data</span></h3><p dir="auto">All raw images are provided as DICOM files under a root directory:</p><div class="code-block with-line-numbers" data-language="text"><pre><code spellcheck="false">
+dicom/
+    {dicom_series.id}/
+        *.dcm</code></pre></div><p dir="auto">For each series:</p><ul><li><p dir="auto"><code class="inline" spellcheck="false">dicom/{dicom_series.id}/</code> contains all DICOM slices belonging to that series.</p></li><li><p dir="auto">Your model’s <code class="inline" spellcheck="false">predict(study_dir)</code> method will receive the path:</p><ul><li><p dir="auto"><code class="inline" spellcheck="false">study_dir = "dicom/{dicom_series.id}"</code></p></li></ul></li></ul><p dir="auto">You are free to use any DICOM loading strategy that works inside the official environment (e.g., <code class="inline" spellcheck="false">pydicom</code>, <code class="inline" spellcheck="false">SimpleITK</code>, MONAI loaders).</p><h3 dir="auto"><span contenteditable="false" class="heading-actions "></span><span class="heading-content">3. Annotation JSON files</span></h3><p dir="auto">Per-slice annotations (segmentation, keypoints, fracture boxes) are stored as JSON files:</p><div class="code-block with-line-numbers" data-language="text"><pre><code spellcheck="false">
+annotations/
+    {dicom_series.id}/
+        {SOPInstanceUID}.json</code></pre></div><p dir="auto">Each JSON file for a given DICOM instance (<code class="inline" spellcheck="false">SOPInstanceUID</code>) contains:</p><ul><li><p dir="auto">A <strong>segmentation map</strong> encoded as a 2D label mask (ICH subtypes encoded as integer labels) stored as RLE (Run-Length Encoding).</p></li><li><p dir="auto">A <strong>class map</strong> describing the mapping from integer label → class name.</p></li><li><p dir="auto">A <strong>keypoints</strong> dictionary mapping keypoint name → (x, y) coordinates (or <code class="inline" spellcheck="false">None</code>).</p></li><li><p dir="auto">A list of <strong>boxes</strong> in <code class="inline" spellcheck="false">[x, y, w, h]</code> format, typically used for skull fractures.</p></li></ul><p dir="auto"></p><h2 dir="auto"><span contenteditable="false" class="heading-actions "></span><span class="heading-content">Intermediate Quantities &amp; Triage Rules</span></h2><h3 dir="auto"><span contenteditable="false" class="heading-actions "></span><span class="heading-content">Intermediate schema (per series)</span></h3><p dir="auto">For each CT series, your model must output the following intermediate values:</p><ul><li><p dir="auto"><code class="inline" spellcheck="false">"V_EDH"</code> – total epidural hemorrhage volume in mL</p></li><li><p dir="auto"><code class="inline" spellcheck="false">"V_SDH"</code> – total subdural hemorrhage volume in mL</p></li><li><p dir="auto"><code class="inline" spellcheck="false">"V_IPH"</code> – total intraparenchymal / intracerebral hemorrhage volume in mL</p></li><li><p dir="auto"><code class="inline" spellcheck="false">"V_SAH"</code> – total subarachnoid hemorrhage volume in mL</p></li><li><p dir="auto"><code class="inline" spellcheck="false">"V_IVH"</code> – total intraventricular hemorrhage volume in mL</p></li><li><p dir="auto"><code class="inline" spellcheck="false">"fracture_prob"</code> – probability (0–1) of any skull fracture in the series</p></li><li><p dir="auto"><code class="inline" spellcheck="false">"MLS_mm"</code> – midline shift at the foramen of Monro level in mm</p></li></ul><p dir="auto">The <strong>same schema</strong> is used for both:</p><ul><li><p dir="auto">Ground truth intermediates: <code class="inline" spellcheck="false">y_true[series_id]</code></p></li><li><p dir="auto">Predicted intermediates: <code class="inline" spellcheck="false">y_pred[series_id]</code></p></li></ul><h3 dir="auto"><span contenteditable="false" class="heading-actions "></span><span class="heading-content">Triage classes</span></h3><ul><li><p dir="auto"><strong>0 – Non-urgent</strong></p></li><li><p dir="auto"><strong>1 – Urgent</strong></p></li><li><p dir="auto"><strong>2 – Critical</strong></p></li></ul><h3 dir="auto"><span contenteditable="false" class="heading-actions "></span><span class="heading-content">Official triage function</span></h3><p dir="auto">This is the <strong>canonical triage function</strong> that will be used to derive triage labels from intermediate values:</p><div class="code-block with-line-numbers" data-language="python"><pre><code spellcheck="false">
+from typing import Any, Dict, Mapping
+
+\
+TRIAGE_REQUIRED_KEYS = {
+    "V_EDH",
+    "V_SDH",
+    "V_IPH",
+    "V_SAH",
+    "V_IVH",
+    "fracture_prob",
+    "MLS_mm",
+}
+
+\
+def validate_intermediates(intermediates: Mapping[str, Any]) -&gt; Dict[str, float]:
+    """Validate and normalize intermediate values for a single series.
+
+    This helper checks that a mapping (for example, one entry in y_true or
+    y_pred) contains exactly the keys expected by the triage function and
+    that all values are convertible to Python floats.
+
+    Expected keys for each series:
+
+        * "V_EDH": total epidural hemorrhage volume in mL
+        * "V_SDH": total subdural hemorrhage volume in mL
+        * "V_IPH": total intraparenchymal/intracerebral hemorrhage volume
+            in mL
+        * "V_SAH": total subarachnoid hemorrhage volume in mL
+        * "V_IVH": total intraventricular hemorrhage volume in mL
+        * "fracture_prob": probability (0–1) of any skull fracture
+        * "MLS_mm": midline shift at the foramen of Monro level in mm
+
+    The same schema is used for both y_true and y_pred, even though they
+    represent ground truth and predictions, respectively.
+
+    Args:
+        intermediates: Mapping with intermediate values for a single series.
+
+    Returns:
+        A new dictionary mapping each required key to a float.
+
+    Raises:
+        ValueError: If required keys are missing or unexpected keys are
+            present.
+        TypeError: If any value cannot be converted to float.
+    """
+    missing = TRIAGE_REQUIRED_KEYS - intermediates.keys()
+    extra = intermediates.keys() - TRIAGE_REQUIRED_KEYS
+
+    if missing:
+        raise ValueError(
+            f"Missing keys in intermediates: {sorted(missing)}. "
+            f"Expected keys: {sorted(TRIAGE_REQUIRED_KEYS)}."
+        )
+    if extra:
+        raise ValueError(
+            f"Unexpected keys in intermediates: {sorted(extra)}. "
+            f"Expected keys: {sorted(TRIAGE_REQUIRED_KEYS)}."
+        )
+
+    cleaned: Dict[str, float] = {}
+    for key in TRIAGE_REQUIRED_KEYS:
+        try:
+            cleaned[key] = float(intermediates[key])
+        except Exception as exc:  # noqa: BLE001
+            raise TypeError(
+                f"Value for key {key!r} must be convertible to float, "
+                f"got type {type(intermediates[key]).__name__}."
+            ) from exc
+
+    return cleaned
+
+\
+def triage_from_intermediates(intermediates: Mapping[str, Any]) -&gt; int:
+    """Compute triage class from intermediate imaging primitives.
+
+    This function implements a fixed, clinically inspired set of rules that
+    convert intermediate quantities for a single CT study into a triage label:
+
+        * 0 = non-urgent
+        * 1 = urgent
+        * 2 = critical
+
+    The same expected keys and logic are used for both ground truth
+    intermediates (y_true) and predicted intermediates (y_pred). All thresholds
+    are hard-coded in this function so that post-processing is fully
+    deterministic and consistent across users.
+
+    Expected keys in `intermediates`:
+
+        * "V_EDH": total epidural hemorrhage volume in mL (&gt;= 0)
+        * "V_SDH": total subdural hemorrhage volume in mL (&gt;= 0)
+        * "V_IPH": total intraparenchymal/intracerebral hemorrhage volume
+            in mL (&gt;= 0)
+        * "V_SAH": total subarachnoid hemorrhage volume in mL (&gt;= 0)
+        * "V_IVH": total intraventricular hemorrhage volume in mL (&gt;= 0)
+        * "fracture_prob": probability (0–1) that any skull fracture is
+            present
+        * "MLS_mm": midline shift at the foramen of Monro level in mm (&gt;= 0)
+
+    Core behavior:
+
+        * Small hemorrhage volumes (&lt; 0.1 mL) and very small MLS (&lt; 1 mm)
+          are treated as noise.
+        * High MLS is considered critical only if there is intracranial
+          hemorrhage or fracture. If MLS is high with neither hemorrhage nor
+          fracture, the case is considered urgent.
+        * ICH-based critical thresholds are relatively high to avoid an
+          excessively large critical class and bias. Moderate hemorrhages
+          without major MLS are typically urgent rather than critical.
+
+    Args:
+        intermediates: Mapping with intermediate values for one CT series.
+            The mapping may be one entry from y_true or y_pred.
+
+    Returns:
+        Triage class as an integer:
+            * 0 = non-urgent
+            * 1 = urgent
+            * 2 = critical
+
+    Raises:
+        ValueError: If required keys are missing or unexpected keys are
+            present.
+        TypeError: If any intermediate value cannot be converted to float.
+    """
+    # Normalize and validate keys / types
+    vals = validate_intermediates(intermediates)
+
+    # Extract and clamp primitives
+    V_EDH = max(0.0, vals["V_EDH"])
+    V_SDH = max(0.0, vals["V_SDH"])
+    V_IPH = max(0.0, vals["V_IPH"])
+    V_SAH = max(0.0, vals["V_SAH"])
+    V_IVH = max(0.0, vals["V_IVH"])
+    MLS_mm = max(0.0, vals["MLS_mm"])
+    fracture_prob = float(vals["fracture_prob"])
+
+    total_vol = V_EDH + V_SDH + V_IPH + V_SAH + V_IVH
+
+    # -----------------------
+    # Hard-coded thresholds
+    # -----------------------
+    EPS_VOLUME = 0.1       # mL: ignore tiny volumes as noise
+    EPS_MLS = 1.0          # mm: ignore &lt;1 mm as no meaningful shift
+
+    MLS_CRITICAL = 5.0     # mm: high MLS threshold
+    MLS_URGENT_LOW = 3.0   # mm: moderate MLS range lower bound
+
+    EDH_CRIT = 30.0        # mL
+    SDH_CRIT = 70.0        # mL
+    IPH_CRIT = 70.0        # mL
+    TOTAL_VOL_CRIT = 60.0  # mL
+
+    COMBO_MLS = 3.0        # mm: for MLS + volume combo rule
+    COMBO_VOL = 40.0       # mL
+
+    FRAC_VOL_CRIT = 15.0   # mL: fracture + hemorrhage for critical
+
+    FRACTURE_PRESENCE_THRESHOLD = 0.5  # fracture probability threshold
+
+    # Derived flags
+    has_ich = total_vol &gt;= EPS_VOLUME
+    mls_present = MLS_mm &gt;= EPS_MLS
+    fracture_present = fracture_prob &gt;= FRACTURE_PRESENCE_THRESHOLD
+
+    # -----------------------
+    # Critical triage (2)
+    # -----------------------
+
+    # 1) MLS-driven critical *only if* there is ICH or fracture
+    if MLS_mm &gt;= MLS_CRITICAL and (has_ich or fracture_present):
+        return 2
+
+    # 2) Large single-compartment hemorrhages
+    if V_EDH &gt;= EDH_CRIT:
+        return 2
+    if V_SDH &gt;= SDH_CRIT:
+        return 2
+    if V_IPH &gt;= IPH_CRIT:
+        return 2
+
+    # 3) Large total hemorrhage burden
+    if total_vol &gt;= TOTAL_VOL_CRIT:
+        return 2
+
+    # 4) Combined hemorrhage + MLS rule
+    if has_ich and MLS_mm &gt;= COMBO_MLS and total_vol &gt;= COMBO_VOL:
+        return 2
+
+    # 5) Fracture with substantial hemorrhage
+    if fracture_present and total_vol &gt;= FRAC_VOL_CRIT:
+        return 2
+
+    # -----------------------
+    # Urgent triage (1)
+    # -----------------------
+
+    # 6) MLS in critical range but no hemorrhage and no fracture
+    if MLS_mm &gt;= MLS_CRITICAL and not (has_ich or fracture_present):
+        return 1
+
+    # 7) Any meaningful hemorrhage
+    if has_ich:
+        return 1
+
+    # 8) Moderate MLS range
+    if MLS_URGENT_LOW &lt;= MLS_mm &lt; MLS_CRITICAL:
+        return 1
+
+    # 9) Fracture with small hemorrhage
+    if fracture_present and total_vol &lt; FRAC_VOL_CRIT:
+        return 1
+
+    # 10) Small hemorrhage with any non-trivial MLS
+    if total_vol &gt;= EPS_VOLUME and mls_present:
+        return 1
+
+    # -----------------------
+    # Non-urgent triage (0)
+    # -----------------------
+    return 0</code></pre></div><p dir="auto"></p><h2 dir="auto"><span contenteditable="false" class="heading-actions "></span><span class="heading-content">Model API &amp; Environment</span></h2><h3 dir="auto"><span contenteditable="false" class="heading-actions "></span><span class="heading-content">Evaluation environment</span></h3><p dir="auto">All models will be evaluated in a controlled environment with:</p><ul><li><p dir="auto"><strong>Hardware</strong></p><ul><li><p dir="auto">1 × GPU with <strong>24 GB VRAM</strong> (e.g., NVIDIA RTX-class GPU)</p></li><li><p dir="auto">Sufficient CPU and RAM for typical medical imaging workloads</p></li></ul></li><li><p dir="auto"><strong>Software</strong></p><ul><li><p dir="auto">A predefined <strong>Docker image</strong> containing:</p><ul><li><p dir="auto">Python (version to be specified, e.g., 3.10)</p></li><li><p dir="auto">PyTorch, TensorFlow/Keras, and commonly used libraries</p></li><li><p dir="auto"><code class="inline" spellcheck="false">pydicom</code> and supporting packages</p></li></ul></li><li><p dir="auto">The exact package versions and Docker image name will be specified on the competition page.</p></li></ul></li></ul><p dir="auto"><strong>Important:</strong></p><ul><li><p dir="auto">Your code <strong>must</strong> run in this environment <strong>without installing extra packages at evaluation time</strong>.</p></li><li><p dir="auto">Your model must complete inference on the hidden evaluation set within a <strong>global time limit</strong> on a single 24 GB GPU (target &lt;≈ 30 minutes; design for ≤ 15 minutes).</p></li><li><p dir="auto">All <strong>prediction logic</strong>, including preprocessing, batching, and ensembling, is implemented inside your code.</p></li></ul><h2 dir="auto"><span contenteditable="false" class="heading-actions "></span><span class="heading-content">Rules</span></h2><ul><li><p dir="auto"><strong>Data usage</strong></p><ul><li><p dir="auto">Only use the <strong>official competition data</strong> and any external resources explicitly allowed by the organizers.</p></li><li><p dir="auto">Do not attempt to re-identify patients; all data are anonymized.</p></li></ul></li><li><p dir="auto"><strong>Annotations</strong></p><ul><li><p dir="auto">You may fully use the provided segmentation masks, fracture boxes, and keypoints for training.</p></li><li><p dir="auto">You must not manually label or otherwise access ground truth on the hidden test set.</p></li></ul></li><li><p dir="auto"><strong>Model submission</strong></p><ul><li><p dir="auto">Your submission must contain <code class="inline" spellcheck="false">model.py</code> and a <code class="inline" spellcheck="false">models/</code> directory with all necessary weights.</p></li><li><p dir="auto">Your model must run in the official Docker image and satisfy the time limit on a single 24 GB GPU.</p></li></ul></li><li><p dir="auto"><strong>Ensembling</strong></p><ul><li><p dir="auto">Ensembling multiple models is allowed, as long as the full inference pipeline completes within time and memory limits.</p></li></ul></li><li><p dir="auto"><strong>Reproducibility</strong></p><ul><li><p dir="auto">Top teams may be required to share additional details (training code, configs, etc.) to verify results.</p></li></ul></li><li><p dir="auto"><strong>Fair play</strong></p><ul><li><p dir="auto">Sharing of general ideas and open-source code is encouraged.</p></li><li><p dir="auto">Sharing of private test predictions, test labels, or attempts to reverse-engineer the evaluation system is strictly prohibited.</p></li><li><p dir="auto">Organizers reserve the right to disqualify teams for non-compliance or suspicious behavior.</p></li></ul></li></ul><p dir="auto"></p><p dir="auto"></p></div></div></article><script type="module">
+          window.status = "ready";
+        </script></body></html>

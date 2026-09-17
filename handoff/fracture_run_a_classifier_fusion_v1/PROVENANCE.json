@@ -1,0 +1,19 @@
+{
+  "source_detector": "/mnt/mohammad.rezaei/TRAIN_SKULL/YOLO_12/outputs/yolo26s_p2_hu800_ww1600_run_a_full169/weights/final_deployment.pt",
+  "source_classifier": "/mnt/mohammad.rezaei/TRAIN_SKULL/YOLO_12/outputs/run_a_fracture_classifier_full169/final_classifier.pt",
+  "fusion_oof_report_sha256": "ba1b5140031fa41eb930e2cbcd299e2dc019e4d6d3704ec2962e9688185f6411",
+  "detector_only_oof": {
+    "oracle_other_heads_macro_f1": 0.9696273781,
+    "study_pr_auc": 0.5355486381,
+    "sensitivity": 0.2916667
+  },
+  "fusion_oof": {
+    "oracle_other_heads_macro_f1": 0.9696273781,
+    "study_pr_auc": 0.5592862949,
+    "sensitivity": 0.3333333
+  },
+  "warning": "The fusion improved fracture-specific OOF metrics but did not improve oracle-other-heads triage Macro-F1. It should therefore be treated as a fracture-recall-oriented candidate, not as proven improvement in the official competition primary metric.",
+  "detector_transform_limit": "The full-OOF Run A deployment top10-percent/raw-threshold mapping is apparent-selected. Fusion OOF used fold-specific cross-fitted detector probabilities; its metric is not direct validation of this final global mapping plus FULL169 classifier.",
+  "channel_limit": "The completed classifier experiment trained from RGB-converted PNGs but inferred direct 2.5D HU-channel arrays. This asymmetric channel convention is deliberately preserved for protocol fidelity, not claimed optimal.",
+  "evaluation_scope": "Oracle-other-heads uses ground-truth ICH/MLS; it is not final submission Macro-F1. Fixed test was not used for handoff selection."
+}

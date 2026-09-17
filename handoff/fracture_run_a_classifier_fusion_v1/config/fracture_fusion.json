@@ -1,0 +1,20 @@
+{
+  "detector_architecture": "YOLO26s-P2 Run A FULL169",
+  "detector_sha256": "109bc30f72b27269ce13edf6937fc8c3f7e6462e0f8a87b1074770e83ea44640",
+  "classifier_architecture": "Run A P5 C2PSA layer 10 512ch -> GAP -> LN512 -> Linear512x128 -> SiLU -> Dropout0.10 -> Linear128x1",
+  "classifier_sha256": "ec0d34c7164453a8a80e476762080829bb4f8b219fd5fc8067380af891a50485",
+  "window_level": 800.0,
+  "window_width": 1600.0,
+  "context_distance_mm": 5.0,
+  "imgsz": 768,
+  "detector_conf": 0.01,
+  "nms_iou": 0.5,
+  "detector_aggregation": "top10_percent_mean",
+  "detector_raw_operating_point": 0.39717610677083337,
+  "detector_calibration": "Run A monotonic piecewise linear raw threshold to official 0.5",
+  "classifier_aggregation": "top5_mean",
+  "alpha_detector": 0.75,
+  "alpha_classifier": 0.25,
+  "official_fracture_threshold": 0.5,
+  "classifier_fixed_epochs": 9
+}

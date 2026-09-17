@@ -1,0 +1,926 @@
+{
+  "evaluation_name": "fracture_only_official_triage",
+  "evaluation_partition": "patient-grouped full-study OOF (169); fixed test excluded",
+  "model_source": {
+    "cache_dir": "/mnt/mohammad.rezaei/TRAIN_SKULL/YOLO_12/outputs/full_study_oof_run_a_768_deployment_score_cache_v2_169",
+    "matches_submit_run": "Run A 768 YOLO26s-P2 deployment_score cache v2_169",
+    "submit_artifact": "submit/models/best.pt (Fold 2 packaged for deployment)",
+    "submit_aggregator": "top10_percent_mean",
+    "submit_raw_operating_point": 0.39717610677083337,
+    "official_fracture_cutoff_after_mapping": 0.5
+  },
+  "why_this_exists": "Oracle-other-heads Macro-F1 can stay high even when the fracture head is weak, because GT ICH/MLS already determine many triage classes. This evaluation zeros ICH and MLS for both GT and predictions so only fracture_prob can change the official triage class.",
+  "primary_metric": "fracture_only_two_class_macro_f1",
+  "n_studies": 169,
+  "n_fracture_positive": 24,
+  "n_fracture_negative": 145,
+  "baselines_summary": {
+    "fracture_prob_all_zero": {
+      "fracture_only_two_class_macro_f1": 0.46178343949044587,
+      "accuracy": 0.8579881656804734,
+      "sensitivity": 0.0,
+      "specificity": 1.0,
+      "precision": null,
+      "pr_auc": 0.14201183431952663,
+      "roc_auc": 0.5,
+      "tp_fp_fn_tn": [
+        0,
+        0,
+        24,
+        145
+      ],
+      "binary_qwk": 0.0,
+      "three_class_macro_f1_reference": 0.3078556263269639
+    },
+    "fracture_prob_all_one": {
+      "fracture_only_two_class_macro_f1": 0.12435233160621761,
+      "accuracy": 0.14201183431952663,
+      "sensitivity": 1.0,
+      "specificity": 0.0,
+      "precision": 0.14201183431952663,
+      "pr_auc": 0.14201183431952663,
+      "roc_auc": 0.5,
+      "tp_fp_fn_tn": [
+        24,
+        145,
+        0,
+        0
+      ],
+      "binary_qwk": 0.0,
+      "three_class_macro_f1_reference": 0.08290155440414508
+    },
+    "raw_top10_percent_mean_at_0.5": {
+      "fracture_only_two_class_macro_f1": 0.6707792207792208,
+      "accuracy": 0.893491124260355,
+      "sensitivity": 0.25,
+      "specificity": 1.0,
+      "precision": 1.0,
+      "pr_auc": 0.5645870675453538,
+      "roc_auc": 0.7288793103448277,
+      "tp_fp_fn_tn": [
+        6,
+        0,
+        18,
+        145
+      ],
+      "binary_qwk": 0.3638644918444165,
+      "three_class_macro_f1_reference": 0.4471861471861472
+    }
+  },
+  "submit_deployment_apparent_all_oof": {
+    "warning": "Uses the packaged submit aggregator + raw operating point on all OOF studies. Apparent/deployment diagnostic, not unbiased.",
+    "summary": {
+      "fracture_only_two_class_macro_f1": 0.7238562091503268,
+      "accuracy": 0.9053254437869822,
+      "sensitivity": 0.3333333333333333,
+      "specificity": 1.0,
+      "precision": 1.0,
+      "pr_auc": 0.5645870675453538,
+      "roc_auc": 0.7288793103448277,
+      "tp_fp_fn_tn": [
+        8,
+        0,
+        16,
+        145
+      ],
+      "binary_qwk": 0.46178343949044587,
+      "three_class_macro_f1_reference": 0.48257080610021785
+    },
+    "detail": {
+      "metric_name": "fracture_only_official_triage",
+      "method": "Official triage_from_intermediates with V_EDH=V_SDH=V_IPH=V_SAH=V_IVH=MLS_mm=0 for both GT and predictions; only fracture_prob varies.",
+      "note_class_2_unreachable": "With ICH and MLS zeroed, official rules never return Critical (2); fracture_present maps to Urgent (1), else Non-urgent (0).",
+      "official_fracture_presence_threshold": 0.5,
+      "primary_two_class_macro_f1": {
+        "pooled_macro_f1": 0.7238562091503268,
+        "micro_f1": 0.9053254437869822,
+        "accuracy": 0.9053254437869822,
+        "classwise": {
+          "0": {
+            "precision": 0.9006211180124224,
+            "recall": 1.0,
+            "f1": 0.9477124183006536,
+            "support": 145
+          },
+          "1": {
+            "precision": 1.0,
+            "recall": 0.3333333333333333,
+            "f1": 0.5,
+            "support": 24
+          }
+        },
+        "confusion_matrix_labels": [
+          0,
+          1
+        ],
+        "confusion_matrix": [
+          [
+            145,
+            0
+          ],
+          [
+            16,
+            8
+          ]
+        ],
+        "n_studies": 169
+      },
+      "three_class_macro_f1_for_reference": {
+        "pooled_macro_f1": 0.48257080610021785,
+        "micro_f1": 0.9053254437869822,
+        "classwise": {
+          "0": {
+            "precision": 0.9006211180124224,
+            "recall": 1.0,
+            "f1": 0.9477124183006536,
+            "support": 145
+          },
+          "1": {
+            "precision": 1.0,
+            "recall": 0.3333333333333333,
+            "f1": 0.5,
+            "support": 24
+          },
+          "2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0
+          }
+        },
+        "confusion_matrix_labels": [
+          0,
+          1,
+          2
+        ],
+        "confusion_matrix": [
+          [
+            145,
+            0,
+            0
+          ],
+          [
+            16,
+            8,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "accuracy": 0.9053254437869822,
+        "n_studies": 169
+      },
+      "binary_fracture_metrics": {
+        "threshold_in_probability_space": 0.5,
+        "tp": 8,
+        "fp": 0,
+        "fn": 16,
+        "tn": 145,
+        "sensitivity": 0.3333333333333333,
+        "specificity": 1.0,
+        "precision": 1.0,
+        "binary_qwk_diagnostic": 0.46178343949044587,
+        "pr_auc": 0.5645870675453538,
+        "roc_auc": 0.7288793103448277
+      },
+      "gt_triage_counts": {
+        "0": 145,
+        "1": 24,
+        "2": 0
+      },
+      "pred_triage_counts": {
+        "0": 161,
+        "1": 8,
+        "2": 0
+      }
+    },
+    "oracle_other_heads_contrast": {
+      "warning": "Same fracture scores, but GT ICH/MLS kept \u2014 shows masking.",
+      "pooled_macro_f1": 0.9851285968933028,
+      "classwise": {
+        "0": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 23
+        },
+        "1": {
+          "precision": 0.9444444444444444,
+          "recall": 1.0,
+          "f1": 0.9714285714285714,
+          "support": 51
+        },
+        "2": {
+          "precision": 1.0,
+          "recall": 0.968421052631579,
+          "f1": 0.983957219251337,
+          "support": 95
+        }
+      },
+      "confusion_matrix": [
+        [
+          23,
+          0,
+          0
+        ],
+        [
+          0,
+          51,
+          0
+        ],
+        [
+          0,
+          3,
+          92
+        ]
+      ]
+    },
+    "masking_gap_oracle_minus_fracture_only_two_class": 0.261272387742976
+  },
+  "unbiased_crossfit_fixed_submit_aggregator": {
+    "description": "Aggregator fixed to submit top10_percent_mean; raw operating point chosen each fold by fracture-only two-class Macro-F1 on the other folds.",
+    "summary": {
+      "fracture_only_two_class_macro_f1": 0.733157894736842,
+      "accuracy": 0.893491124260355,
+      "sensitivity": 0.4166666666666667,
+      "specificity": 0.9724137931034482,
+      "precision": 0.7142857142857143,
+      "pr_auc": 0.5642184190605074,
+      "roc_auc": 0.7280172413793103,
+      "tp_fp_fn_tn": [
+        10,
+        4,
+        14,
+        141
+      ],
+      "binary_qwk": 0.4709565217391305,
+      "three_class_macro_f1_reference": 0.48877192982456136
+    },
+    "detail": {
+      "metric_name": "fracture_only_official_triage",
+      "method": "Official triage_from_intermediates with V_EDH=V_SDH=V_IPH=V_SAH=V_IVH=MLS_mm=0 for both GT and predictions; only fracture_prob varies.",
+      "note_class_2_unreachable": "With ICH and MLS zeroed, official rules never return Critical (2); fracture_present maps to Urgent (1), else Non-urgent (0).",
+      "official_fracture_presence_threshold": 0.5,
+      "primary_two_class_macro_f1": {
+        "pooled_macro_f1": 0.733157894736842,
+        "micro_f1": 0.893491124260355,
+        "accuracy": 0.893491124260355,
+        "classwise": {
+          "0": {
+            "precision": 0.9096774193548387,
+            "recall": 0.9724137931034482,
+            "f1": 0.94,
+            "support": 145
+          },
+          "1": {
+            "precision": 0.7142857142857143,
+            "recall": 0.4166666666666667,
+            "f1": 0.5263157894736842,
+            "support": 24
+          }
+        },
+        "confusion_matrix_labels": [
+          0,
+          1
+        ],
+        "confusion_matrix": [
+          [
+            141,
+            4
+          ],
+          [
+            14,
+            10
+          ]
+        ],
+        "n_studies": 169
+      },
+      "three_class_macro_f1_for_reference": {
+        "pooled_macro_f1": 0.48877192982456136,
+        "micro_f1": 0.893491124260355,
+        "classwise": {
+          "0": {
+            "precision": 0.9096774193548387,
+            "recall": 0.9724137931034482,
+            "f1": 0.94,
+            "support": 145
+          },
+          "1": {
+            "precision": 0.7142857142857143,
+            "recall": 0.4166666666666667,
+            "f1": 0.5263157894736842,
+            "support": 24
+          },
+          "2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0
+          }
+        },
+        "confusion_matrix_labels": [
+          0,
+          1,
+          2
+        ],
+        "confusion_matrix": [
+          [
+            141,
+            4,
+            0
+          ],
+          [
+            14,
+            10,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "accuracy": 0.893491124260355,
+        "n_studies": 169
+      },
+      "binary_fracture_metrics": {
+        "threshold_in_probability_space": 0.5,
+        "tp": 10,
+        "fp": 4,
+        "fn": 14,
+        "tn": 141,
+        "sensitivity": 0.4166666666666667,
+        "specificity": 0.9724137931034482,
+        "precision": 0.7142857142857143,
+        "binary_qwk_diagnostic": 0.4709565217391305,
+        "pr_auc": 0.5642184190605074,
+        "roc_auc": 0.7280172413793103
+      },
+      "gt_triage_counts": {
+        "0": 145,
+        "1": 24,
+        "2": 0
+      },
+      "pred_triage_counts": {
+        "0": 155,
+        "1": 14,
+        "2": 0
+      }
+    },
+    "oracle_other_heads_contrast_macro_f1": 0.9696273781380164,
+    "fold_selections": [
+      {
+        "heldout_fold": 0,
+        "selected_raw_operating_point": 0.225372314453125,
+        "selection_studies": 136,
+        "selection_macro_f1": 0.7877110827302398
+      },
+      {
+        "heldout_fold": 1,
+        "selected_raw_operating_point": 0.2464599609375,
+        "selection_studies": 136,
+        "selection_macro_f1": 0.7633516262883149
+      },
+      {
+        "heldout_fold": 2,
+        "selected_raw_operating_point": 0.22365824381510419,
+        "selection_studies": 137,
+        "selection_macro_f1": 0.727200318598168
+      },
+      {
+        "heldout_fold": 3,
+        "selected_raw_operating_point": 0.225372314453125,
+        "selection_studies": 133,
+        "selection_macro_f1": 0.7639452332657202
+      },
+      {
+        "heldout_fold": 4,
+        "selected_raw_operating_point": 0.225372314453125,
+        "selection_studies": 134,
+        "selection_macro_f1": 0.7372549019607844
+      }
+    ]
+  },
+  "unbiased_crossfit_aggregator_and_threshold": {
+    "description": "Both aggregator and raw operating point chosen each fold by fracture-only two-class Macro-F1 on the other folds.",
+    "summary": {
+      "fracture_only_two_class_macro_f1": 0.7116817814492233,
+      "accuracy": 0.8875739644970414,
+      "sensitivity": 0.375,
+      "specificity": 0.9724137931034482,
+      "precision": 0.6923076923076923,
+      "pr_auc": 0.5390178712400557,
+      "roc_auc": 0.7165229885057471,
+      "tp_fp_fn_tn": [
+        9,
+        4,
+        15,
+        141
+      ],
+      "binary_qwk": 0.42956120092378747,
+      "three_class_macro_f1_reference": 0.4744545209661489
+    },
+    "detail": {
+      "metric_name": "fracture_only_official_triage",
+      "method": "Official triage_from_intermediates with V_EDH=V_SDH=V_IPH=V_SAH=V_IVH=MLS_mm=0 for both GT and predictions; only fracture_prob varies.",
+      "note_class_2_unreachable": "With ICH and MLS zeroed, official rules never return Critical (2); fracture_present maps to Urgent (1), else Non-urgent (0).",
+      "official_fracture_presence_threshold": 0.5,
+      "primary_two_class_macro_f1": {
+        "pooled_macro_f1": 0.7116817814492233,
+        "micro_f1": 0.8875739644970414,
+        "accuracy": 0.8875739644970414,
+        "classwise": {
+          "0": {
+            "precision": 0.9038461538461539,
+            "recall": 0.9724137931034482,
+            "f1": 0.9368770764119602,
+            "support": 145
+          },
+          "1": {
+            "precision": 0.6923076923076923,
+            "recall": 0.375,
+            "f1": 0.4864864864864865,
+            "support": 24
+          }
+        },
+        "confusion_matrix_labels": [
+          0,
+          1
+        ],
+        "confusion_matrix": [
+          [
+            141,
+            4
+          ],
+          [
+            15,
+            9
+          ]
+        ],
+        "n_studies": 169
+      },
+      "three_class_macro_f1_for_reference": {
+        "pooled_macro_f1": 0.4744545209661489,
+        "micro_f1": 0.8875739644970414,
+        "classwise": {
+          "0": {
+            "precision": 0.9038461538461539,
+            "recall": 0.9724137931034482,
+            "f1": 0.9368770764119602,
+            "support": 145
+          },
+          "1": {
+            "precision": 0.6923076923076923,
+            "recall": 0.375,
+            "f1": 0.4864864864864865,
+            "support": 24
+          },
+          "2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0
+          }
+        },
+        "confusion_matrix_labels": [
+          0,
+          1,
+          2
+        ],
+        "confusion_matrix": [
+          [
+            141,
+            4,
+            0
+          ],
+          [
+            15,
+            9,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "accuracy": 0.8875739644970414,
+        "n_studies": 169
+      },
+      "binary_fracture_metrics": {
+        "threshold_in_probability_space": 0.5,
+        "tp": 9,
+        "fp": 4,
+        "fn": 15,
+        "tn": 141,
+        "sensitivity": 0.375,
+        "specificity": 0.9724137931034482,
+        "precision": 0.6923076923076923,
+        "binary_qwk_diagnostic": 0.42956120092378747,
+        "pr_auc": 0.5390178712400557,
+        "roc_auc": 0.7165229885057471
+      },
+      "gt_triage_counts": {
+        "0": 145,
+        "1": 24,
+        "2": 0
+      },
+      "pred_triage_counts": {
+        "0": 156,
+        "1": 13,
+        "2": 0
+      }
+    },
+    "oracle_other_heads_contrast_macro_f1": 0.9696273781380164,
+    "fold_selections": [
+      {
+        "heldout_fold": 0,
+        "selected_aggregator": "top10_percent_mean",
+        "selected_raw_operating_point": 0.225372314453125
+      },
+      {
+        "heldout_fold": 1,
+        "selected_aggregator": "top5_mean",
+        "selected_raw_operating_point": 0.172503662109375
+      },
+      {
+        "heldout_fold": 2,
+        "selected_aggregator": "top10_percent_mean",
+        "selected_raw_operating_point": 0.22365824381510419
+      },
+      {
+        "heldout_fold": 3,
+        "selected_aggregator": "top2_mean",
+        "selected_raw_operating_point": 0.3876190185546875
+      },
+      {
+        "heldout_fold": 4,
+        "selected_aggregator": "top10_percent_mean",
+        "selected_raw_operating_point": 0.225372314453125
+      }
+    ]
+  },
+  "apparent_fracture_only_retune_submit_aggregator": {
+    "warning": "Selected on all OOF; deployment parameter only, not unbiased.",
+    "raw_operating_point": 0.225372314453125,
+    "summary": {
+      "fracture_only_two_class_macro_f1": 0.7536231884057971,
+      "accuracy": 0.8994082840236687,
+      "sensitivity": 0.4583333333333333,
+      "specificity": 0.9724137931034482,
+      "precision": 0.7333333333333333,
+      "pr_auc": 0.5645870675453538,
+      "roc_auc": 0.7288793103448277,
+      "tp_fp_fn_tn": [
+        11,
+        4,
+        13,
+        141
+      ],
+      "binary_qwk": 0.5106455459035939,
+      "three_class_macro_f1_reference": 0.5024154589371981
+    },
+    "selection": {
+      "selection_metric": "fracture_only_two_class_macro_f1",
+      "selection_macro_f1": 0.7536231884057971
+    }
+  },
+  "baselines_detail": {
+    "fracture_prob_all_zero": {
+      "metric_name": "fracture_only_official_triage",
+      "method": "Official triage_from_intermediates with V_EDH=V_SDH=V_IPH=V_SAH=V_IVH=MLS_mm=0 for both GT and predictions; only fracture_prob varies.",
+      "note_class_2_unreachable": "With ICH and MLS zeroed, official rules never return Critical (2); fracture_present maps to Urgent (1), else Non-urgent (0).",
+      "official_fracture_presence_threshold": 0.5,
+      "primary_two_class_macro_f1": {
+        "pooled_macro_f1": 0.46178343949044587,
+        "micro_f1": 0.8579881656804734,
+        "accuracy": 0.8579881656804734,
+        "classwise": {
+          "0": {
+            "precision": 0.8579881656804734,
+            "recall": 1.0,
+            "f1": 0.9235668789808917,
+            "support": 145
+          },
+          "1": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 24
+          }
+        },
+        "confusion_matrix_labels": [
+          0,
+          1
+        ],
+        "confusion_matrix": [
+          [
+            145,
+            0
+          ],
+          [
+            24,
+            0
+          ]
+        ],
+        "n_studies": 169
+      },
+      "three_class_macro_f1_for_reference": {
+        "pooled_macro_f1": 0.3078556263269639,
+        "micro_f1": 0.8579881656804734,
+        "classwise": {
+          "0": {
+            "precision": 0.8579881656804734,
+            "recall": 1.0,
+            "f1": 0.9235668789808917,
+            "support": 145
+          },
+          "1": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 24
+          },
+          "2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0
+          }
+        },
+        "confusion_matrix_labels": [
+          0,
+          1,
+          2
+        ],
+        "confusion_matrix": [
+          [
+            145,
+            0,
+            0
+          ],
+          [
+            24,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "accuracy": 0.8579881656804734,
+        "n_studies": 169
+      },
+      "binary_fracture_metrics": {
+        "threshold_in_probability_space": 0.5,
+        "tp": 0,
+        "fp": 0,
+        "fn": 24,
+        "tn": 145,
+        "sensitivity": 0.0,
+        "specificity": 1.0,
+        "precision": null,
+        "binary_qwk_diagnostic": 0.0,
+        "pr_auc": 0.14201183431952663,
+        "roc_auc": 0.5
+      },
+      "gt_triage_counts": {
+        "0": 145,
+        "1": 24,
+        "2": 0
+      },
+      "pred_triage_counts": {
+        "0": 169,
+        "1": 0,
+        "2": 0
+      }
+    },
+    "fracture_prob_all_one": {
+      "metric_name": "fracture_only_official_triage",
+      "method": "Official triage_from_intermediates with V_EDH=V_SDH=V_IPH=V_SAH=V_IVH=MLS_mm=0 for both GT and predictions; only fracture_prob varies.",
+      "note_class_2_unreachable": "With ICH and MLS zeroed, official rules never return Critical (2); fracture_present maps to Urgent (1), else Non-urgent (0).",
+      "official_fracture_presence_threshold": 0.5,
+      "primary_two_class_macro_f1": {
+        "pooled_macro_f1": 0.12435233160621761,
+        "micro_f1": 0.14201183431952663,
+        "accuracy": 0.14201183431952663,
+        "classwise": {
+          "0": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 145
+          },
+          "1": {
+            "precision": 0.14201183431952663,
+            "recall": 1.0,
+            "f1": 0.24870466321243523,
+            "support": 24
+          }
+        },
+        "confusion_matrix_labels": [
+          0,
+          1
+        ],
+        "confusion_matrix": [
+          [
+            0,
+            145
+          ],
+          [
+            0,
+            24
+          ]
+        ],
+        "n_studies": 169
+      },
+      "three_class_macro_f1_for_reference": {
+        "pooled_macro_f1": 0.08290155440414508,
+        "micro_f1": 0.14201183431952663,
+        "classwise": {
+          "0": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 145
+          },
+          "1": {
+            "precision": 0.14201183431952663,
+            "recall": 1.0,
+            "f1": 0.24870466321243523,
+            "support": 24
+          },
+          "2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0
+          }
+        },
+        "confusion_matrix_labels": [
+          0,
+          1,
+          2
+        ],
+        "confusion_matrix": [
+          [
+            0,
+            145,
+            0
+          ],
+          [
+            0,
+            24,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "accuracy": 0.14201183431952663,
+        "n_studies": 169
+      },
+      "binary_fracture_metrics": {
+        "threshold_in_probability_space": 0.5,
+        "tp": 24,
+        "fp": 145,
+        "fn": 0,
+        "tn": 0,
+        "sensitivity": 1.0,
+        "specificity": 0.0,
+        "precision": 0.14201183431952663,
+        "binary_qwk_diagnostic": 0.0,
+        "pr_auc": 0.14201183431952663,
+        "roc_auc": 0.5
+      },
+      "gt_triage_counts": {
+        "0": 145,
+        "1": 24,
+        "2": 0
+      },
+      "pred_triage_counts": {
+        "0": 0,
+        "1": 169,
+        "2": 0
+      }
+    },
+    "raw_top10_percent_mean_at_0.5": {
+      "metric_name": "fracture_only_official_triage",
+      "method": "Official triage_from_intermediates with V_EDH=V_SDH=V_IPH=V_SAH=V_IVH=MLS_mm=0 for both GT and predictions; only fracture_prob varies.",
+      "note_class_2_unreachable": "With ICH and MLS zeroed, official rules never return Critical (2); fracture_present maps to Urgent (1), else Non-urgent (0).",
+      "official_fracture_presence_threshold": 0.5,
+      "primary_two_class_macro_f1": {
+        "pooled_macro_f1": 0.6707792207792208,
+        "micro_f1": 0.893491124260355,
+        "accuracy": 0.893491124260355,
+        "classwise": {
+          "0": {
+            "precision": 0.8895705521472392,
+            "recall": 1.0,
+            "f1": 0.9415584415584416,
+            "support": 145
+          },
+          "1": {
+            "precision": 1.0,
+            "recall": 0.25,
+            "f1": 0.4,
+            "support": 24
+          }
+        },
+        "confusion_matrix_labels": [
+          0,
+          1
+        ],
+        "confusion_matrix": [
+          [
+            145,
+            0
+          ],
+          [
+            18,
+            6
+          ]
+        ],
+        "n_studies": 169
+      },
+      "three_class_macro_f1_for_reference": {
+        "pooled_macro_f1": 0.4471861471861472,
+        "micro_f1": 0.893491124260355,
+        "classwise": {
+          "0": {
+            "precision": 0.8895705521472392,
+            "recall": 1.0,
+            "f1": 0.9415584415584416,
+            "support": 145
+          },
+          "1": {
+            "precision": 1.0,
+            "recall": 0.25,
+            "f1": 0.4,
+            "support": 24
+          },
+          "2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0
+          }
+        },
+        "confusion_matrix_labels": [
+          0,
+          1,
+          2
+        ],
+        "confusion_matrix": [
+          [
+            145,
+            0,
+            0
+          ],
+          [
+            18,
+            6,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "accuracy": 0.893491124260355,
+        "n_studies": 169
+      },
+      "binary_fracture_metrics": {
+        "threshold_in_probability_space": 0.5,
+        "tp": 6,
+        "fp": 0,
+        "fn": 18,
+        "tn": 145,
+        "sensitivity": 0.25,
+        "specificity": 1.0,
+        "precision": 1.0,
+        "binary_qwk_diagnostic": 0.3638644918444165,
+        "pr_auc": 0.5645870675453538,
+        "roc_auc": 0.7288793103448277
+      },
+      "gt_triage_counts": {
+        "0": 145,
+        "1": 24,
+        "2": 0
+      },
+      "pred_triage_counts": {
+        "0": 163,
+        "1": 6,
+        "2": 0
+      }
+    }
+  }
+}

@@ -1,0 +1,5 @@
+path: /mnt/mohammad.rezaei/TRAIN_SKULL/YOLO_12/data_prepared/skull_hu800_ww1600
+train: /mnt/mohammad.rezaei/TRAIN_SKULL/YOLO_12/data_prepared/skull_hu800_ww1600/kfold/fold_2_train.txt
+val: /mnt/mohammad.rezaei/TRAIN_SKULL/YOLO_12/data_prepared/skull_hu800_ww1600/kfold/fold_2_val.txt
+names:
+  0: skull_fracture

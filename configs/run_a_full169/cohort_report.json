@@ -1,0 +1,69 @@
+{
+  "status": "prepared_training_not_started",
+  "cohort_protocol": "exact_union_of_manifest_mapped_explicit_validation_studies_v1",
+  "source": "fold_0_val.txt..fold_4_val.txt mapped through manifest.csv; no filename inference",
+  "studies": 169,
+  "patients": 155,
+  "training_images": 4418,
+  "per_fold_studies": [
+    33,
+    33,
+    32,
+    36,
+    35
+  ],
+  "per_fold_images": [
+    900,
+    877,
+    869,
+    885,
+    887
+  ],
+  "fixed_test_study_overlap": 0,
+  "fixed_test_patient_overlap": 0,
+  "duplicate_studies": 0,
+  "duplicate_images": 0,
+  "all_existing_run_a_development_images_included": true,
+  "metadata_only_or_tier2_images_added": 0,
+  "training_cohort_sha256": "3acb49a60be94a3e0750d308e1fb92848ca9a8a672421437adaedc8f68fd9203",
+  "study_ids_sha256": "8ad6852a11ff70b8d70c95585b305db3a243a936c75882b10008c6b21490e006",
+  "patient_ids_sha256": "9cddcae34a222c0114b61d46e062a809389857b8bc1b00175b02d0479a253dc0",
+  "manifest_sha256": "56b7ee684c6103dbd3a6974bb846aced8d75b1516e4ec22183f6bd42a47714c3",
+  "source_val_list_sha256": {
+    "0": "25cb6e49bc31e86028cd36c115f87820b9945aa310ad0603b76a9d3a88cf7f53",
+    "1": "040d9d152bece18c68358fc5d357e652769da7f7145bc45959f34ccb17341bc0",
+    "2": "081f3511126c91732cc4b703a41cf30e089cafb3c97ec1f2c30e6dc82ac27ab5",
+    "3": "d9da086967f8d72250671a706652499ce8b9b8b978c701d817e918084b2f31a6",
+    "4": "1cf9cdcacd74bd56ae9370bb5f1b76f7c5d38960d232e4d80627a33b7f8a1db6"
+  },
+  "best_epochs": [
+    42,
+    99,
+    61,
+    20,
+    59
+  ],
+  "mean_best_epoch": 56.2,
+  "median_best_epoch": 59,
+  "recommended_fixed_epochs": 59,
+  "train_list": "/mnt/mohammad.rezaei/TRAIN_SKULL/YOLO_12/configs/run_a_full169/full169_train.txt",
+  "train_list_sha256": "3acb49a60be94a3e0750d308e1fb92848ca9a8a672421437adaedc8f68fd9203",
+  "syntax_only_val_list": "/mnt/mohammad.rezaei/TRAIN_SKULL/YOLO_12/configs/run_a_full169/syntax_only_val.txt",
+  "syntax_only_val_list_sha256": "7e2c55a40bbc8f6c073e311e18857fa8b1a64fcdc1d3f8da14ccabb3f6d2944c",
+  "data_yaml": "/mnt/mohammad.rezaei/TRAIN_SKULL/YOLO_12/configs/run_a_full169/dataset.yaml",
+  "data_yaml_sha256": "f17620aad8dc12902f976dd0014db778103edff6a54c0c94015bad7810d19b6d",
+  "architecture_sha256": "2d57edc829bd8add780c6b60b043add292fd35373ed0f8b6f316287a4ba339e1",
+  "source_coco_sha256": "646f8bc3fe0a656803d95c294f7852321748cb29d13466a1af8862e2db384a1b",
+  "seed": 42,
+  "validation_policy": "model.train(val=False); YAML val is one in-cohort syntax-only image. Ultralytics may run it only at finalization; no metric selects a checkpoint. weights/last.pt at fixed epoch 59 is copied to weights/final_deployment.pt.",
+  "forbidden_modes": {
+    "aug_mild": false,
+    "hnm": false,
+    "balanced_sampling_b25": false,
+    "extra_metadata_negatives": false,
+    "spatial_filtering": false,
+    "verifier": false,
+    "hu_jitter": false,
+    "imgsz_1024": false
+  }
+}

@@ -1,0 +1,68 @@
+# Training outputs, experiment runs, and runtime logs
+outputs/
+runs/
+logs/
+*.log
+*.log.*
+*.lock
+
+# Model checkpoints and generated weights (GitHub has a 100 MB file limit)
+*.pt
+*.pth
+*.ckpt
+*.bin
+*.h5
+*.hdf5
+*.onnx
+*.engine
+*.safetensors
+weights/
+
+# Datasets and generated image/label trees
+data/
+datasets/
+data_prepared/
+iaaa-contest-bct/Data/
+*.dcm
+*.nii
+*.nii.gz
+*.npy
+*.npz
+*.jpg
+*.jpeg
+*.png
+*.bmp
+*.tif
+*.tiff
+
+# Python, Ultralytics, and experiment caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.cache
+.tensorboard/
+tensorboard/
+wandb/
+mlruns/
+.mlflow/
+.venv/
+venv/
+env/
+
+# Archives and generated submission bundles
+*.zip
+*.tar
+*.tar.gz
+*.7z
+*.rar
+
+# Local/editor/system files
+.env
+.env.*
+!.env.example
+.DS_Store
+.idea/
+.vscode/
+*.swp

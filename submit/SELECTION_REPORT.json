@@ -1,0 +1,62 @@
+{
+  "selection_date": "2026-09-15",
+  "primary_metric": "oracle_other_heads_macro_f1",
+  "metric_scope_warning": "Run A family selection used oracle-other-heads OOF with ground-truth ICH/MLS. The FULL169 checkpoint was refit for a fixed 59 epochs, not selected by training-set validation. OOF metrics do not directly measure this final refit or the standalone submission, whose ICH/MLS outputs are zero placeholders.",
+  "authoritative_oof_cohort": {
+    "studies": 169,
+    "per_fold": [33, 33, 32, 36, 35]
+  },
+  "selected_checkpoint": {
+    "run": "Run A FULL169 fixed-epoch refit",
+    "fold": null,
+    "source": "outputs/yolo26s_p2_hu800_ww1600_run_a_full169/weights/final_deployment.pt",
+    "packaged": "submit/models/best.pt",
+    "sha256": "109bc30f72b27269ce13edf6937fc8c3f7e6462e0f8a87b1074770e83ea44640",
+    "fixed_training_epochs": 59,
+    "training_studies": 169,
+    "training_patients": 155,
+    "validation_used_for_checkpoint_selection": false
+  },
+  "per_fold_heldout_cross_fitted_macro_f1": {
+    "0": 0.9285714285714285,
+    "1": 0.9764982373678026,
+    "2": 1.0,
+    "3": 0.9789147286821706,
+    "4": 0.9658994032395567
+  },
+  "run_a_unbiased_pooled_cross_fitted": {
+    "oracle_other_heads_macro_f1": 0.9696273781380164,
+    "fracture_tp_fp_fn_tn": [7, 3, 17, 142],
+    "fracture_sensitivity": 0.2916666666666667,
+    "fracture_specificity": 0.9793103448275862,
+    "fracture_precision": 0.7,
+    "fracture_pr_auc": 0.5355486380673358
+  },
+  "deployment_postprocessing": {
+    "selection_role": "apparent all-OOF deployment setting; not unbiased performance",
+    "aggregator": "top10_percent_mean",
+    "raw_operating_point": 0.39717610677083337,
+    "official_fracture_cutoff_after_monotonic_mapping": 0.5,
+    "apparent_all_oof_oracle_other_heads_macro_f1": 0.9851285968933028
+  },
+  "rejected_candidates": {
+    "Run B 1024": {
+      "decision": "REJECT_1024",
+      "authoritative_oof_macro_f1": 0.9549576415281188,
+      "delta_vs_selected_run_a": -0.014669736609897566,
+      "patient_clustered_delta_95_ci": [-0.051953966788741764, 0.01968792409253023]
+    },
+    "AUG_MILD_768": {
+      "decision": "REJECT_AUG_MILD_768",
+      "training_status": "all five folds completed",
+      "authoritative_oof_macro_f1": 0.9384685620946521,
+      "delta_vs_selected_run_a": -0.031158816043364235,
+      "patient_clustered_delta_95_ci": [-0.08027122604476968, 0.011104446955775817],
+      "fracture_tp_fp_fn_tn": [3, 14, 21, 131],
+      "fracture_pr_auc": 0.33494973555148366
+    }
+  },
+  "fracture_classifier_status": "FULL169 final_classifier.pt and training_completed.json absent at packaging; detector-only selected, fusion not packaged",
+  "checkpoint_selection_limitation": "The five Fold checkpoints were evaluated on different held-out patient groups, so no single Fold was proven best for deployment. FULL169 is a fixed-epoch refit of the selected Run A family; its own OOF performance cannot be measured on the 169 training Studies.",
+  "competition_metric_limitation": "Oracle-other-heads Macro-F1 is not final submission Macro-F1. Detector-plus-classifier OOF fusion improved fracture-specific metrics but had the same oracle triage Macro-F1 as detector-only; fusion is not active because the FULL169 classifier is not finalized."
+}

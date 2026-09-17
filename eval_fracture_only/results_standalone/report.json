@@ -1,0 +1,375 @@
+{
+  "evaluation_name": "standalone_fracture_model_only",
+  "purpose": "Measure only the fracture model. Rules accept fracture_prob alone; ICH and MLS are not inputs and are never used.",
+  "rules": {
+    "name": "standalone_fracture_triage",
+    "inputs": [
+      "fracture_prob"
+    ],
+    "outputs": {
+      "0": "Non-urgent",
+      "1": "Urgent"
+    },
+    "threshold": 0.5,
+    "depends_on_ICH": false,
+    "depends_on_MLS": false,
+    "calls_official_triage": false,
+    "derivation": {
+      "source": "IAAA official triage_from_intermediates",
+      "dropped_because_needs_MLS_or_ICH": [
+        "MLS >= 5 and (has_ich or fracture) -> Critical",
+        "V_EDH/SDH/IPH/total volume Critical thresholds",
+        "has_ich and MLS >= 3 and total_vol >= 40 -> Critical",
+        "fracture and total_vol >= 15 -> Critical",
+        "MLS >= 5 without ich/fracture -> Urgent",
+        "has_ich -> Urgent",
+        "3 <= MLS < 5 -> Urgent",
+        "total_vol >= 0.1 and mls_present -> Urgent"
+      ],
+      "kept_and_simplified": [
+        {
+          "official": "fracture_present and total_vol < 15 -> Urgent (1)",
+          "standalone": "fracture_present -> Urgent (1)",
+          "reason": "total_vol is an ICH quantity; ignoring it leaves fracture alone."
+        }
+      ],
+      "standalone_rules": [
+        "if fracture_prob >= 0.5: return 1  # Urgent",
+        "return 0  # Non-urgent"
+      ]
+    }
+  },
+  "model_source": {
+    "cache_dir": "/mnt/mohammad.rezaei/TRAIN_SKULL/YOLO_12/outputs/full_study_oof_run_a_768_deployment_score_cache_v2_169",
+    "aggregator": "top10_percent_mean",
+    "submit_raw_operating_point": 0.39717610677083337,
+    "submit_artifact": "submit/models/best.pt + submit/model.py mapping"
+  },
+  "n_studies": 169,
+  "n_fracture_positive": 24,
+  "n_fracture_negative": 145,
+  "primary_metrics": [
+    "model_accuracy",
+    "macro_f1_binary",
+    "standalone_triage_macro_f1",
+    "sensitivity",
+    "specificity",
+    "pr_auc",
+    "roc_auc"
+  ],
+  "submit_deployment_apparent": {
+    "warning": "Apparent all-OOF with packaged submit threshold; not unbiased.",
+    "summary": {
+      "model_accuracy": 0.9053254437869822,
+      "macro_f1_binary": 0.7238562091503268,
+      "standalone_triage_macro_f1": 0.7238562091503268,
+      "sensitivity": 0.3333333333333333,
+      "specificity": 1.0,
+      "precision": 1.0,
+      "positive_f1": 0.5,
+      "pr_auc": 0.5645870675453538,
+      "roc_auc": 0.7288793103448277,
+      "tp_fp_fn_tn": [
+        8,
+        0,
+        16,
+        145
+      ],
+      "binary_qwk": 0.46178343949044587
+    },
+    "detail": {
+      "rule": "standalone_fracture_triage",
+      "threshold": 0.5,
+      "n_studies": 169,
+      "n_positive": 24,
+      "n_negative": 145,
+      "model_accuracy": 0.9053254437869822,
+      "model_balanced_accuracy": 0.6666666666666666,
+      "sensitivity": 0.3333333333333333,
+      "specificity": 1.0,
+      "precision": 1.0,
+      "positive_f1": 0.5,
+      "macro_f1_binary": 0.7238562091503268,
+      "tp_fp_fn_tn": [
+        8,
+        0,
+        16,
+        145
+      ],
+      "binary_qwk": 0.46178343949044587,
+      "standalone_triage_macro_f1": 0.7238562091503268,
+      "standalone_triage_accuracy": 0.9053254437869822,
+      "classwise": {
+        "0": {
+          "precision": 0.9006211180124224,
+          "recall": 1.0,
+          "f1": 0.9477124183006536,
+          "support": 145
+        },
+        "1": {
+          "precision": 1.0,
+          "recall": 0.3333333333333333,
+          "f1": 0.5,
+          "support": 24
+        }
+      },
+      "confusion_matrix_labels": [
+        0,
+        1
+      ],
+      "confusion_matrix": [
+        [
+          145,
+          0
+        ],
+        [
+          16,
+          8
+        ]
+      ],
+      "gt_class_counts": {
+        "0": 145,
+        "1": 24
+      },
+      "pred_class_counts": {
+        "0": 161,
+        "1": 8
+      },
+      "pr_auc": 0.5645870675453538,
+      "roc_auc": 0.7288793103448277
+    }
+  },
+  "raw_score_at_official_0.5": {
+    "summary": {
+      "model_accuracy": 0.893491124260355,
+      "macro_f1_binary": 0.6707792207792208,
+      "standalone_triage_macro_f1": 0.6707792207792208,
+      "sensitivity": 0.25,
+      "specificity": 1.0,
+      "precision": 1.0,
+      "positive_f1": 0.4,
+      "pr_auc": 0.5645870675453538,
+      "roc_auc": 0.7288793103448277,
+      "tp_fp_fn_tn": [
+        6,
+        0,
+        18,
+        145
+      ],
+      "binary_qwk": 0.3638644918444165
+    },
+    "detail": {
+      "rule": "standalone_fracture_triage",
+      "threshold": 0.5,
+      "n_studies": 169,
+      "n_positive": 24,
+      "n_negative": 145,
+      "model_accuracy": 0.893491124260355,
+      "model_balanced_accuracy": 0.625,
+      "sensitivity": 0.25,
+      "specificity": 1.0,
+      "precision": 1.0,
+      "positive_f1": 0.4,
+      "macro_f1_binary": 0.6707792207792208,
+      "tp_fp_fn_tn": [
+        6,
+        0,
+        18,
+        145
+      ],
+      "binary_qwk": 0.3638644918444165,
+      "standalone_triage_macro_f1": 0.6707792207792208,
+      "standalone_triage_accuracy": 0.893491124260355,
+      "classwise": {
+        "0": {
+          "precision": 0.8895705521472392,
+          "recall": 1.0,
+          "f1": 0.9415584415584416,
+          "support": 145
+        },
+        "1": {
+          "precision": 1.0,
+          "recall": 0.25,
+          "f1": 0.4,
+          "support": 24
+        }
+      },
+      "confusion_matrix_labels": [
+        0,
+        1
+      ],
+      "confusion_matrix": [
+        [
+          145,
+          0
+        ],
+        [
+          18,
+          6
+        ]
+      ],
+      "gt_class_counts": {
+        "0": 145,
+        "1": 24
+      },
+      "pred_class_counts": {
+        "0": 163,
+        "1": 6
+      },
+      "pr_auc": 0.5645870675453538,
+      "roc_auc": 0.7288793103448277
+    }
+  },
+  "unbiased_crossfit": {
+    "description": "Raw operating point chosen per fold by standalone Macro-F1 on other folds; aggregator fixed to submit top10_percent_mean.",
+    "summary": {
+      "model_accuracy": 0.893491124260355,
+      "macro_f1_binary": 0.733157894736842,
+      "standalone_triage_macro_f1": 0.733157894736842,
+      "sensitivity": 0.4166666666666667,
+      "specificity": 0.9724137931034482,
+      "precision": 0.7142857142857143,
+      "positive_f1": 0.5263157894736842,
+      "pr_auc": 0.5642184190605074,
+      "roc_auc": 0.7280172413793103,
+      "tp_fp_fn_tn": [
+        10,
+        4,
+        14,
+        141
+      ],
+      "binary_qwk": 0.4709565217391305
+    },
+    "detail": {
+      "rule": "standalone_fracture_triage",
+      "threshold": 0.5,
+      "n_studies": 169,
+      "n_positive": 24,
+      "n_negative": 145,
+      "model_accuracy": 0.893491124260355,
+      "model_balanced_accuracy": 0.6945402298850575,
+      "sensitivity": 0.4166666666666667,
+      "specificity": 0.9724137931034482,
+      "precision": 0.7142857142857143,
+      "positive_f1": 0.5263157894736842,
+      "macro_f1_binary": 0.733157894736842,
+      "tp_fp_fn_tn": [
+        10,
+        4,
+        14,
+        141
+      ],
+      "binary_qwk": 0.4709565217391305,
+      "standalone_triage_macro_f1": 0.733157894736842,
+      "standalone_triage_accuracy": 0.893491124260355,
+      "classwise": {
+        "0": {
+          "precision": 0.9096774193548387,
+          "recall": 0.9724137931034482,
+          "f1": 0.94,
+          "support": 145
+        },
+        "1": {
+          "precision": 0.7142857142857143,
+          "recall": 0.4166666666666667,
+          "f1": 0.5263157894736842,
+          "support": 24
+        }
+      },
+      "confusion_matrix_labels": [
+        0,
+        1
+      ],
+      "confusion_matrix": [
+        [
+          141,
+          4
+        ],
+        [
+          14,
+          10
+        ]
+      ],
+      "gt_class_counts": {
+        "0": 145,
+        "1": 24
+      },
+      "pred_class_counts": {
+        "0": 155,
+        "1": 14
+      },
+      "pr_auc": 0.5642184190605074,
+      "roc_auc": 0.7280172413793103
+    },
+    "fold_selections": [
+      {
+        "heldout_fold": 0,
+        "selected_raw_operating_point": 0.225372314453125,
+        "selection_standalone_macro_f1": 0.7877110827302398,
+        "selection_studies": 136
+      },
+      {
+        "heldout_fold": 1,
+        "selected_raw_operating_point": 0.2464599609375,
+        "selection_standalone_macro_f1": 0.7633516262883149,
+        "selection_studies": 136
+      },
+      {
+        "heldout_fold": 2,
+        "selected_raw_operating_point": 0.22365824381510419,
+        "selection_standalone_macro_f1": 0.727200318598168,
+        "selection_studies": 137
+      },
+      {
+        "heldout_fold": 3,
+        "selected_raw_operating_point": 0.225372314453125,
+        "selection_standalone_macro_f1": 0.7639452332657202,
+        "selection_studies": 133
+      },
+      {
+        "heldout_fold": 4,
+        "selected_raw_operating_point": 0.225372314453125,
+        "selection_standalone_macro_f1": 0.7372549019607844,
+        "selection_studies": 134
+      }
+    ]
+  },
+  "baselines": {
+    "always_no_fracture": {
+      "model_accuracy": 0.8579881656804734,
+      "macro_f1_binary": 0.46178343949044587,
+      "standalone_triage_macro_f1": 0.46178343949044587,
+      "sensitivity": 0.0,
+      "specificity": 1.0,
+      "precision": null,
+      "positive_f1": 0.0,
+      "pr_auc": 0.14201183431952663,
+      "roc_auc": 0.5,
+      "tp_fp_fn_tn": [
+        0,
+        0,
+        24,
+        145
+      ],
+      "binary_qwk": 0.0
+    },
+    "always_fracture": {
+      "model_accuracy": 0.14201183431952663,
+      "macro_f1_binary": 0.12435233160621761,
+      "standalone_triage_macro_f1": 0.12435233160621761,
+      "sensitivity": 1.0,
+      "specificity": 0.0,
+      "precision": 0.14201183431952663,
+      "positive_f1": 0.24870466321243523,
+      "pr_auc": 0.14201183431952663,
+      "roc_auc": 0.5,
+      "tp_fp_fn_tn": [
+        24,
+        145,
+        0,
+        0
+      ],
+      "binary_qwk": 0.0
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "active_model": "Run A FULL169 detector only",
+  "detector_score_protocol": "deployment_score",
+  "detector_conf": 0.01,
+  "nms_iou": 0.5,
+  "imgsz": 768,
+  "slice_to_study_aggregation": "top10_percent_mean of per-slice max confidence",
+  "raw_operating_point": 0.39717610677083337,
+  "mapping": "monotonic piecewise linear: (0,0), (raw_operating_point,0.5), (1,1)",
+  "official_fracture_threshold": 0.5,
+  "fusion_active": false,
+  "historical_oof_fusion_only": {
+    "classifier_aggregation": "top5_mean",
+    "alpha_detector": 0.75,
+    "alpha_classifier": 0.25,
+    "reason_inactive": "FULL169 final_classifier.pt and completion marker absent"
+  }
+}
